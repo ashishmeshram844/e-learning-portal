@@ -1,3 +1,29 @@
+# REACT 
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+front-application/node_modules
+front-application/.pnp
+front-application/*.pnp.js
+
+# testing
+front-application/coverage
+
+# production
+front-application/build
+
+# misc
+front-application/*.DS_Store
+front-application/*.env.local
+front-application/*.env.development.local
+front-application/*.env.test.local
+front-application/*.env.production.local
+
+front-application/npm-debug.log*
+front-application/yarn-debug.log*
+front-application/yarn-error.log*
+
+
 # extra added
 .env
 .venv
