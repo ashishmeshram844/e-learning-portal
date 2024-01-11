@@ -1,3 +1,5 @@
+<div align="left">
+
 # API Application
 - This is a FastAPI Application where all apis are created
 - This api's are integrated in frontend applications
@@ -29,3 +31,4 @@
 - **api server document available on**  : **http://localhost:8001/docs**
 
 
+</div>
