@@ -1,12 +1,1 @@
-from fastapi import FastAPI
-
-
-
-app = FastAPI()
-
-
-@app.get('/')
-def root():
-    return {
-        'msg': 'its working'
-    }
+from config.settings import app
