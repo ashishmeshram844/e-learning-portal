@@ -11,3 +11,5 @@ def get_users(request:Request):
     return {
         'admin' : 'all users list'
     }
+
+
