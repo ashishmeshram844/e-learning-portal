@@ -5,6 +5,6 @@ services :
     build:
       context: .
     ports:
-      - 8000:8000
+      - 8001:8000
     restart: always
    
