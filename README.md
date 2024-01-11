@@ -18,3 +18,6 @@ This is E-Learning portal where users can contribute their learning materials an
 
 - UI Application : 
     - localhost:8000
+
+- Mongo DB URI : 
+    - mongodb://root:Ashish123@mongo:27017/
