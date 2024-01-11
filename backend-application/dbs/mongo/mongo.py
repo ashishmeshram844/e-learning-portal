@@ -42,11 +42,3 @@ class PymongoDB(Database):
     def __init__(self):
         super().__init__()
      
-  
-
-
-# if __name__ == '__main__':
-#     pydb = PymongoDB()
-#     mongodb = pydb.get_pymongo_client()
-#     db = mongodb['tsm']
-    # email_config = db['email_configuration'].find_one()
