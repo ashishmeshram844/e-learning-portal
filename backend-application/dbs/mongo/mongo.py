@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 
-connection_string = 'mongodb://root:Ashish123@mongo:27017/'
+connection_string = 'mongodb://root:Ashish123@localhost:27017/'
+
 CONNECTION_DB = connection_string
 
 class Database():
