@@ -8,6 +8,9 @@
 - docker (24.0.7)
 - You can get help from official docker site for installation of docker
 - **https://docs.docker.com/get-docker/**
+- in Ubuntu :
+
+        sudo snap refresh --revision=2893 docker
 
 
 ### Start Project : 
