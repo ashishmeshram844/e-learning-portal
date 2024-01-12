@@ -29,6 +29,10 @@ front-application/yarn-error.log*
 .venv
 venv/
 venv
+backend-application/log_files/*.log
+/backend-application/log_files/*.log
+*/*.log
+*.log
 
 */venv/
 */venv
