@@ -6,12 +6,9 @@ from pydantic import Field,validator
 import uuid
 
 
-def generate_uuid():
-    print(datetime.now().isoformat())
-    return uuid.uuid4()
 
 class UserBase(BaseModel):
-    id :  str = str(generate_uuid())
+    id :  str = str(uuid.uuid4())
     username : Annotated[str,Query(max_length=55)] 
     email : Annotated[str | None,Query(max_length=100)] = None
     full_name : Annotated[str | None,Query(max_length=100)] = None
