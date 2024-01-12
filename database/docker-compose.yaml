@@ -10,6 +10,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: Ashish123
+      MONGO_INITDB_ROOT_DATABASE: users_db        
       ME_CONFIG_MONGODB_URL: mongodb://root:Ashish123@mongo:27017/
     ports:
       - 27017:27017
