@@ -1,4 +1,6 @@
 from pymongo import MongoClient
+from config.logger.all_loggers import create_db_log_message
+import inspect
 
 connection_string = 'mongodb://root:Ashish123@localhost:27017/'
 
@@ -29,8 +31,15 @@ class Database():
     def get_pymongo_client(
         self
         ):
-        self.__client = MongoClient(self.__connection)
-        return self.__client
+        try:
+            self.__client = MongoClient(self.__connection)
+            return self.__client
+        except Exception as e:
+            create_db_log_message(
+                message=f"Failed to connect mongodb  because : {e}",
+                state=('warning'),
+                module=f"{__name__}.{inspect.stack()[0][3]}"
+            )
 
     def close(self):
         self.__client.close()
