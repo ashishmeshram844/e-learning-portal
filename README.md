@@ -11,6 +11,7 @@
 - Install Docker in ubuntu using snap store :
 
         sudo snap refresh --revision=2893 docker
+        sudo apt install docker-compose
 
 
 ### Start Project : 

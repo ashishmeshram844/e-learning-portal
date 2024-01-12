@@ -1,15 +1,15 @@
 from fastapi import APIRouter,Request
-
-user = APIRouter(
-    prefix= '/users',
-    tags= ["ADMIN USER"]
-)
+from routes.users.routes import user
+from dbs.mongo.queries.user_query import find
+import json
 
 
 @user.get('/')
 def get_users(request:Request):
+    data = find(collection='users',query={'name':"Ashish"})
+    print(data)
     return {
-        'admin' : 'all users list'
+        'data' : data
     }
 
 
