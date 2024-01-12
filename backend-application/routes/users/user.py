@@ -9,18 +9,21 @@ import inspect
 from routes.users.models import UserInput,UserResponse,UsersListResponse
 
 
-@user.get('/', 
-          response_model = UsersListResponse
-        )
+@user.get('/', response_model = UsersListResponse)
 async def get_users(
     request:Request,
     active : bool | None = None
     ) -> UsersListResponse:
-    query = {}
-    if active is not None:
-        query.update({'active' : active})
+    query : dict = {}
     try:
-        data = find(collection='users',query=query) 
+        if active is not None:
+            query.update(
+                {'active' : active}
+                )
+        data = find(
+            collection='users',
+            query=query
+        ) 
         return data
     except Exception as e:
         create_user_log_message(
@@ -28,17 +31,52 @@ async def get_users(
             state="error",
             module=f"{__name__}.{inspect.stack()[0][3]}"
         )
-        raise HTTPException(status_code=500,detail='server connection error')
-
-@user.post('/',
-           response_model = UserResponse
+    raise HTTPException(
+        status_code=500,
+        detail='server connection error'
         )
+
+@user.get('/{user_id}')
+def get_user_detail(
+        request:Request,
+        user_id : str | None = None
+    ):
+    data = find(
+        collection='users',
+        query={'id' : user_id}
+    ) 
+    try:
+        if len(data['body']):
+            return data
+        else:
+            return JSONResponse(
+                {
+                    'status' : 404,
+                    'message' : 'not found',
+                    'body' : []
+                }
+            )
+    except Exception as e:
+        create_user_log_message(
+            message=f'failed to get users detail because : {e}',
+            state="error",
+            module=f"{__name__}.{inspect.stack()[0][3]}"
+        )
+    raise HTTPException(
+        status_code=500,
+        detail='server connection error'
+    )
+
+@user.post('/', response_model = UserResponse)
 async def create_user(
     request:Request,
     user : UserInput
     ) -> UserResponse:
     try:
-        create(collection='users',data=dict(user))
+        create(
+            collection='users',
+            data=dict(user)
+        )
         return user
     except Exception as e:
         create_user_log_message(
@@ -46,6 +84,11 @@ async def create_user(
             state="error",
             module=f"{__name__}.{inspect.stack()[0][3]}"
         )
-    raise HTTPException(status_code=500,detail='server connection error')
-    
+    raise HTTPException(
+        status_code=500,
+        detail='server connection error'
+    )
+
+
+
 

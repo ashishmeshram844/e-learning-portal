@@ -3,12 +3,11 @@ from pydantic import BaseModel
 from typing import Annotated,Optional
 from fastapi import Query
 from pydantic import Field,validator
-import uuid
-
+from uuid import UUID,uuid4
 
 
 class UserBase(BaseModel):
-    id :  str = str(uuid.uuid4())
+    id: str = str(uuid4())
     username : Annotated[str,Query(max_length=55)] 
     email : Annotated[str | None,Query(max_length=100)] = None
     full_name : Annotated[str | None,Query(max_length=100)] = None
