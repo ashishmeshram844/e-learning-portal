@@ -4,12 +4,14 @@ from typing import Annotated,Optional
 from fastapi import Query
 from pydantic import Field,validator
 from uuid import UUID,uuid4
+from pydantic import EmailStr
 
 
 class UserBase(BaseModel):
     id: str = str(uuid4())
     username : Annotated[str,Query(max_length=55)] 
-    email : Annotated[str | None,Query(max_length=100)] = None
+    mobile : int | None = None 
+    email : EmailStr | None = None
     full_name : Annotated[str | None,Query(max_length=100)] = None
 
 class UserInput(UserBase):
@@ -26,3 +28,8 @@ class UserResponse(UserBase):
 class UsersListResponse(BaseModel):
     status : int | str
     body : list[UserResponse]
+
+
+class UpdateUserModel(BaseModel):
+    full_name : Annotated[str | None,Query(max_length=100)] = None
+    updated : Optional[datetime | dict]  = Field(default=datetime.now())
