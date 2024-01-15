@@ -8,11 +8,22 @@ from config.logger.all_loggers import create_db_log_message
 
 
 def generate_response(data):
-    if isinstance(data,list) or isinstance(data,dict):
+    if data == None:
+        return {
+            'status' : status.HTTP_200_OK,
+            'body' : []
+        }
+    elif isinstance(data,list):
         return {
             'status' : status.HTTP_200_OK,
             'body' : data
         }
+    elif isinstance(data,dict):
+        return {
+            'status' : status.HTTP_200_OK,
+            'body' : [data]
+        }
+    
     else:
         create_db_log_message(
             message=f"response data is not in list or dictionary format",
@@ -32,3 +43,19 @@ def convert_json(cursor = None):
             module=f"{__name__}.{inspect.stack()[0][3]}"
         )
         return None
+
+
+
+def format_message(msg = None):
+    try:
+        message  = " ".join(
+            [
+                new_line.strip() for new_line in msg.split("\n")
+            ]
+        )
+        return message
+    except Exception as e:
+        return msg
+    
+
+

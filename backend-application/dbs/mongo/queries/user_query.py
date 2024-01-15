@@ -7,6 +7,9 @@ from fastapi import status
 import inspect
 from config.logger.all_loggers import create_db_log_message
 from .commons import convert_json,generate_response
+from dbs.mongo.queries.commons import format_message
+from fastapi.responses import JSONResponse
+
 
 DB = ALL_DATABASES.get('users_db')
 
@@ -24,37 +27,46 @@ def GET_DB_OBJ(db = DB):
         detail="DB connection error"
         )
 
-
 class DBQuery():
     def __init__(self):
         self.DB_OBJ = GET_DB_OBJ(db = DB)
-
+      
     def find(
             self,
             collection : str = None, 
-            query: dict = {}
+            query: dict = {},
+            only_one = False
             ):
         try:
             if collection:
-                cursor = self.DB_OBJ[collection].find(
-                    query,
-                    {"_id":0}
+                if not only_one:
+                    cursor = self.DB_OBJ[collection].find(
+                        query,
+                        {"_id":0}
                     )
+                else:
+                    cursor = self.DB_OBJ[collection].find_one(
+                        query,
+                        {"_id":0}
+                    )
+                    
                 cursor = convert_json(
                     cursor=cursor
-                    )        
+                    )  
                 return generate_response(
                     data=cursor
                     )
             else:
                 create_db_log_message(
-                        message=f"collection not provided while communicating with {DB} database",
+                        message=f"collection not provided",
                         state=('info'),
                         module=f"{__name__}.{inspect.stack()[0][3]}"
                     )
         except Exception as e:
             create_db_log_message(
-                message=f"Error while fetching data from {collection}  table using {DB} database because : {e}",
+                message=format_message(
+                    f"""Error while fetching data from 
+                        {DB}.{collection} Because : {e}"""),
                 state=('info'),
                 module=f"{__name__}.{inspect.stack()[0][3]}"
             )
@@ -77,13 +89,17 @@ class DBQuery():
                     return cursor
                 else:
                     create_db_log_message(
-                        message=f"Proper data not provided for adding in collection : {collection} in {DB} database",
+                        message= format_message(
+                            f"""Proper data not provided in
+                                {DB}.{collection} collection"""),
                         state=('info'),
                         module=f"{__name__}.{inspect.stack()[0][3]}"
                     )
             else:
                 create_db_log_message(
-                    message=f"collection not provided while communicating with {DB} database",
+                    message=format_message(
+                        f"""collection not provided while 
+                            communicating with {DB} database"""),
                     state=('info'),
                     module=f"{__name__}.{inspect.stack()[0][3]}"
                 )
@@ -108,21 +124,34 @@ class DBQuery():
         This function update the data from provided collection and qeury
         """
         try:
-            update_query = { 
-                "$set": update_data
-            }
-            self.DB_OBJ[collection].update_one(
+            cursor = self.DB_OBJ[collection].find(
                 query,
-                update_query
-            )
-            updated_data = self.find(
-                collection=collection,
-                query=query
-            )
-            return updated_data
+                {"_id":0}
+                )
+            cursor = convert_json(
+                cursor=cursor
+                )        
+            if cursor:
+                update_query = { 
+                    "$set": update_data
+                }
+                self.DB_OBJ[collection].update_one(
+                    query,
+                    update_query
+                )
+                updated_data = self.find(
+                    collection=collection,
+                    query=query
+                )
+                return updated_data
+            else:
+                return generate_response(data=cursor)
         except Exception as e:
             create_db_log_message(
-                message=f"Error Occured while executing Update query on {DB} database and {collection} collection because : {e}",
+                message=format_message(
+                    f"""Error Occured while executing Update 
+                        query on {DB} database and {collection} 
+                        collection because : {e}"""),
                 state=('error'),
                 module=f"{__name__}.{inspect.stack()[0][3]}"
             )
@@ -130,3 +159,6 @@ class DBQuery():
             status_code=500,
             detail="server connection error"
             )   
+    
+
+
