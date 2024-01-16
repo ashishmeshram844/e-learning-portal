@@ -8,7 +8,7 @@ import inspect
 from config.logger.all_loggers import create_db_log_message
 from .commons import convert_json,generate_response
 from dbs.mongo.queries.commons import format_message
-from routes.custom_exception import *
+from commons.custom_exception import *
 
 DB = ALL_DATABASES.get('users_db')
 
@@ -22,8 +22,8 @@ def GET_DB_OBJ(db = DB):
             module=f"{__name__}.{inspect.stack()[0][3]}"
         )
     raise HTTPException(
-        status_code=500,
-        detail="DB connection error"
+        status_code=503,
+        detail="DB service Unavailable"
         )
 
 
@@ -63,6 +63,7 @@ class DBQuery():
                         module=f"{__name__}.{inspect.stack()[0][3]}"
                     )
         except Exception as e:
+            print(e)
             create_db_log_message(
                 message=format_message(
                     f"""Error while fetching data from 
@@ -166,27 +167,32 @@ class DBQuery():
                ):
         try:
             if not collection:
-                raise HTTPException(
-                    status_code=404,
-                    detail="server error")
-            if query:
-                cursor = self.DB_OBJ[collection].delete_one(
-                    query,
-                )
-                cursor = convert_json(
-                    cursor=cursor
-                    )      
-                return {
-                    'status' : 204,
-                    'body': []
-                }
-            else:
-                raise HTTPException(
-                    status_code=500,
-                    detail='server error'
-                )
-        except Exception as e:
-            raise HTTPException(
-                status_code=500,
-                detail='server connection error'
+                create_db_log_message(
+                message=format_message(
+                    f"""collection not provided in {DB} database 
+                        while querying"""),
+                state=('error'),
+                module=f"{__name__}.{inspect.stack()[0][3]}"
             )
+                raise CustomException(500)
+            if not query:
+                raise CustomException(404)
+            found =  self.find(
+                collection=collection,
+                query=query,
+                only_one=True
+            )
+            if  not found.get('body'):
+                raise CustomException(404)
+            cursor = self.DB_OBJ[collection].delete_one(
+                query,
+            )
+            cursor = convert_json(
+                cursor=cursor
+                )      
+            return {
+                'status' : 204,
+                'body': []
+            }
+        except Exception as e:
+            return e

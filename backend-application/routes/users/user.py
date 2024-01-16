@@ -7,8 +7,9 @@ from config.logger.all_loggers import create_user_log_message
 import inspect
 from routes.users.models import UserInput,UserResponse,UsersListResponse,UpdateUserModel
 from fastapi import Response,status
-from routes.custom_exception import *
-
+from commons.custom_exception import CustomException
+from commons.decorators import handle_custom_exception
+from fastapi.responses import JSONResponse
 
 
 @user.get('/', response_model = UsersListResponse)
