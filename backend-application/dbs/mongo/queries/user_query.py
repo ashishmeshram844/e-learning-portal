@@ -8,8 +8,7 @@ import inspect
 from config.logger.all_loggers import create_db_log_message
 from .commons import convert_json,generate_response
 from dbs.mongo.queries.commons import format_message
-from fastapi.responses import JSONResponse
-
+from routes.custom_exception import *
 
 DB = ALL_DATABASES.get('users_db')
 
@@ -26,6 +25,7 @@ def GET_DB_OBJ(db = DB):
         status_code=500,
         detail="DB connection error"
         )
+
 
 class DBQuery():
     def __init__(self):
@@ -160,5 +160,33 @@ class DBQuery():
             detail="server connection error"
             )   
     
-
-
+    def delete(self,
+               collection = None,
+               query = None
+               ):
+        try:
+            if not collection:
+                raise HTTPException(
+                    status_code=404,
+                    detail="server error")
+            if query:
+                cursor = self.DB_OBJ[collection].delete_one(
+                    query,
+                )
+                cursor = convert_json(
+                    cursor=cursor
+                    )      
+                return {
+                    'status' : 204,
+                    'body': []
+                }
+            else:
+                raise HTTPException(
+                    status_code=500,
+                    detail='server error'
+                )
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail='server connection error'
+            )

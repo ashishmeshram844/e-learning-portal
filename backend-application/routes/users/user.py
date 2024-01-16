@@ -7,6 +7,7 @@ from config.logger.all_loggers import create_user_log_message
 import inspect
 from routes.users.models import UserInput,UserResponse,UsersListResponse,UpdateUserModel
 from fastapi import Response,status
+from routes.custom_exception import *
 
 
 
@@ -142,3 +143,22 @@ def update_user(
         status_code=500,
         detail='server connection error'
     )
+
+
+@user.delete('/{user_id}')
+def delete_user(
+    request:Request,
+    response:Response,
+    user_id : str
+):
+    try:
+        data = DBQuery().delete(
+                collection='users',
+                query= {'id' : user_id}
+            )
+        return data
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail='server connection error'
+        )
