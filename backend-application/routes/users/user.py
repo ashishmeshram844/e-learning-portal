@@ -166,3 +166,4 @@ def delete_user(
             status_code=500,
             detail='server connection error'
         )
+
