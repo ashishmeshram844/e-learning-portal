@@ -3,7 +3,6 @@ from fastapi import HTTPException
 from fastapi import status
 from config.logger.all_loggers import create_db_log_message
 import inspect
-from commons.custom_exception import CustomException
 
 def get_db(db_name: str = None) -> any : 
     """

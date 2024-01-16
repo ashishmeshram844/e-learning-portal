@@ -1,5 +1,4 @@
 
-from commons.custom_exception import CustomException
 
 
 def handle_custom_exception(func):

@@ -8,7 +8,8 @@ import inspect
 from config.logger.all_loggers import create_db_log_message
 from .commons import convert_json,generate_response
 from dbs.mongo.queries.commons import format_message
-from commons.custom_exception import *
+from commons.responses import ERR_RESPONSES
+
 
 DB = ALL_DATABASES.get('users_db')
 
@@ -21,10 +22,7 @@ def GET_DB_OBJ(db = DB):
             state=('info'),
             module=f"{__name__}.{inspect.stack()[0][3]}"
         )
-    raise HTTPException(
-        status_code=503,
-        detail="DB service Unavailable"
-        )
+    return ERR_RESPONSES.get(503,500)
 
 
 class DBQuery():
@@ -38,30 +36,30 @@ class DBQuery():
             only_one = False
             ):
         try:
-            if collection:
-                if not only_one:
-                    cursor = self.DB_OBJ[collection].find(
-                        query,
-                        {"_id":0}
-                    )
-                else:
-                    cursor = self.DB_OBJ[collection].find_one(
-                        query,
-                        {"_id":0}
-                    )
-                    
-                cursor = convert_json(
-                    cursor=cursor
-                    )  
-                return generate_response(
-                    data=cursor
-                    )
-            else:
+            if not collection:
                 create_db_log_message(
                         message=f"collection not provided",
                         state=('info'),
                         module=f"{__name__}.{inspect.stack()[0][3]}"
-                    )
+                )
+                return ERR_RESPONSES.get(500,500)
+            if not only_one:
+                cursor = self.DB_OBJ[collection].find(
+                    query,
+                    {"_id":0}
+                )
+            else:
+                cursor = self.DB_OBJ[collection].find_one(
+                    query,
+                    {"_id":0}
+                )
+                
+            cursor = convert_json(
+                cursor=cursor
+                )  
+            return generate_response(
+                data=cursor
+                )
         except Exception as e:
             print(e)
             create_db_log_message(
@@ -71,10 +69,7 @@ class DBQuery():
                 state=('info'),
                 module=f"{__name__}.{inspect.stack()[0][3]}"
             )
-        raise HTTPException(
-                status_code=500,
-                detail="server connection error"
-                )
+        return ERR_RESPONSES.get(500,500)
 
     def create(
             self,
@@ -82,25 +77,25 @@ class DBQuery():
             data : dict | list = None
             ):
         try:
-            if collection:
-                if data:
-                    cursor = self.DB_OBJ[collection].insert_one(
-                        data
-                        )
-                    return cursor
-                else:
-                    create_db_log_message(
-                        message= format_message(
-                            f"""Proper data not provided in
-                                {DB}.{collection} collection"""),
-                        state=('info'),
-                        module=f"{__name__}.{inspect.stack()[0][3]}"
-                    )
-            else:
+            if not collection:
                 create_db_log_message(
                     message=format_message(
                         f"""collection not provided while 
                             communicating with {DB} database"""),
+                    state=('info'),
+                    module=f"{__name__}.{inspect.stack()[0][3]}"
+                )
+                return ERR_RESPONSES.get(500,500)
+            if data:
+                cursor = self.DB_OBJ[collection].insert_one(
+                    data
+                    )
+                return cursor
+            else:
+                create_db_log_message(
+                    message= format_message(
+                        f"""Proper data not provided in
+                            {DB}.{collection} collection"""),
                     state=('info'),
                     module=f"{__name__}.{inspect.stack()[0][3]}"
                 )
@@ -110,10 +105,7 @@ class DBQuery():
                 state=('info'),
                 module=f"{__name__}.{inspect.stack()[0][3]}"
             )
-        raise HTTPException(
-                status_code=500,
-                detail="server connection error"
-                )
+        return ERR_RESPONSES.get(500,500)
 
     def update(
             self,
@@ -142,7 +134,8 @@ class DBQuery():
                 )
                 updated_data = self.find(
                     collection=collection,
-                    query=query
+                    query=query,
+                    only_one=True
                 )
                 return updated_data
             else:
@@ -156,15 +149,16 @@ class DBQuery():
                 state=('error'),
                 module=f"{__name__}.{inspect.stack()[0][3]}"
             )
-        raise HTTPException(
-            status_code=500,
-            detail="server connection error"
-            )   
+        return ERR_RESPONSES.get(500,500)
     
-    def delete(self,
-               collection = None,
-               query = None
-               ):
+    def delete(
+            self,
+            collection = None,
+            query = None
+        ):
+        """
+        This function delete the data from provided collection and qeury
+        """
         try:
             if not collection:
                 create_db_log_message(
@@ -174,16 +168,16 @@ class DBQuery():
                 state=('error'),
                 module=f"{__name__}.{inspect.stack()[0][3]}"
             )
-                raise CustomException(500)
+                return ERR_RESPONSES.get(500,500)
             if not query:
-                raise CustomException(404)
+                return ERR_RESPONSES.get(404,500)
             found =  self.find(
                 collection=collection,
                 query=query,
                 only_one=True
             )
             if  not found.get('body'):
-                raise CustomException(404)
+                return ERR_RESPONSES.get(404,500)
             cursor = self.DB_OBJ[collection].delete_one(
                 query,
             )
@@ -191,8 +185,12 @@ class DBQuery():
                 cursor=cursor
                 )      
             return {
-                'status' : 204,
+                'status' : 200,
+                'message' : 'delete successfully',
                 'body': []
             }
         except Exception as e:
-            return e
+            return ERR_RESPONSES.get(500,500)
+        
+
+

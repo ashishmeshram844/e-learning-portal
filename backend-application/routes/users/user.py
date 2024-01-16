@@ -5,11 +5,8 @@ import json
 from fastapi.exceptions import HTTPException
 from config.logger.all_loggers import create_user_log_message
 import inspect
-from routes.users.models import UserInput,UserResponse,UsersListResponse,UpdateUserModel
+from routes.users.models import *
 from fastapi import Response,status
-from commons.custom_exception import CustomException
-from commons.decorators import handle_custom_exception
-from fastapi.responses import JSONResponse
 
 
 @user.get('/', response_model = UsersListResponse)
@@ -23,6 +20,7 @@ async def get_users(
     """
     query : dict = {}
     try:
+        
         if active is not None:
             query.update(
                 {'active' : active}
@@ -157,8 +155,13 @@ def delete_user(
                 collection='users',
                 query= {'id' : user_id}
             )
+        if not data.get('status',None) == 404:
+            response.status_code = status.HTTP_200_OK
+        else:
+            response.status_code = status.HTTP_404_NOT_FOUND
         return data
     except Exception as e:
+        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         raise HTTPException(
             status_code=500,
             detail='server connection error'
