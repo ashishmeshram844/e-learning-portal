@@ -35,3 +35,13 @@ class UpdateUserModel(BaseModel):
     email : Optional[str] 
     full_name : Optional[str] 
     updated : Optional[datetime | dict]  = Field(default=datetime.now())
+
+class LoginModel(BaseModel):
+    username : str
+    password : str
+
+
+class TokenModel(BaseModel):
+    access_token :str
+    refresh_token : str
+    

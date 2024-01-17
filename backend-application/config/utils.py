@@ -10,7 +10,7 @@ ALGORITHM = "HS256"
 JWT_SECRET_KEY = 'jwt_secrete_key'     # should be kept secret
 JWT_REFRESH_SECRET_KEY = 'refresh_secrete_key'      # should be kept secret
 
-password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+password_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
 
 def get_hashed_password(password: str) -> str:
     return password_context.hash(password)

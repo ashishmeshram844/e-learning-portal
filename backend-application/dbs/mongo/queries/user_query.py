@@ -40,7 +40,10 @@ class DBQuery():
                         state=('info'),
                         module=f"{__name__}.{inspect.stack()[0][3]}"
                 )
-                return ERR_RESPONSES.get(500,500)
+                raise HTTPException(
+                    status_code=500,
+                    detail='server connection error'
+                )
             if not only_one:
                 cursor = self.DB_OBJ[collection].find(
                     query,

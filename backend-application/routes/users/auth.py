@@ -1,5 +1,4 @@
 from fastapi import FastAPI, status, HTTPException, Depends
-from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import RedirectResponse
 from routes.users.routes import auth
 from config.utils import (
@@ -8,8 +7,38 @@ from config.utils import (
     create_refresh_token,
     verify_password
 )
-from uuid import uuid4
+from commons.responses import ERR_RESPONSES
 
+from routes.users.models import LoginModel
+from dbs.mongo.queries.user_query import DBQuery
+from routes.users.models import TokenModel
+
+
+@auth.post('/token', response_model=TokenModel)
+async def create_token(form_data:LoginModel):
+    try:
+        user = DBQuery().find(
+            collection='users',
+            query={'username': form_data.username},
+            only_one=True
+        ) 
+        print("SAS" ,user)  
+        if not user.get('status',None) == 200:
+            return ERR_RESPONSES.get(401,500)
+        if not user.get('body'):
+            return ERR_RESPONSES.get(401,500)
+        hashed_pass = user.get('body')[0].get('password')
+        if not verify_password(form_data.password, hashed_pass):
+            return ERR_RESPONSES.get(401,500)
+        return {
+            "access_token": create_access_token(user.get('body')[0].get('username')),
+            "refresh_token": create_refresh_token(user.get('body')[0].get('username')),
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail='server connection error'
+            )
 
 
 
@@ -34,25 +63,3 @@ from uuid import uuid4
 
 
 
-
-
-# @app.post('/login', summary="Create access and refresh tokens for user", response_model=TokenSchema)
-# async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-#     user = db.get(form_data.username, None)
-#     if user is None:
-#         raise HTTPException(
-#             status_code=status.HTTP_400_BAD_REQUEST,
-#             detail="Incorrect email or password"
-#         )
-
-#     hashed_pass = user['password']
-#     if not verify_password(form_data.password, hashed_pass):
-#         raise HTTPException(
-#             status_code=status.HTTP_400_BAD_REQUEST,
-#             detail="Incorrect email or password"
-#         )
-    
-#     return {
-#         "access_token": create_access_token(user['email']),
-#         "refresh_token": create_refresh_token(user['email']),
-#     }

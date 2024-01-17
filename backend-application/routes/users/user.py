@@ -8,9 +8,6 @@ import inspect
 from routes.users.models import *
 from fastapi import Response,status
 from config.utils import get_hashed_password
-from fastapi.encoders import jsonable_encoder
-
-
 
 
 @user.get('/', response_model = UsersListResponse)
