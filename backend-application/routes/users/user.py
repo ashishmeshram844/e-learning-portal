@@ -7,7 +7,7 @@ from config.logger.all_loggers import create_user_log_message
 import inspect
 from routes.users.models import *
 from fastapi import Response,status
-
+from config.utils import get_hashed_password
 
 @user.get('/', response_model = UsersListResponse)
 async def get_users(
@@ -16,11 +16,16 @@ async def get_users(
     active : bool | None = None
     ) -> UsersListResponse:
     """
-    This function get all available users list
+    ### This function get all available users list.
+    -   checks there is active queryparameter is passed or not \n
+        if passed then check the value of this and update in query dict\n
+        and fetch uses list according to this query dict else fetch \n
+        all users list
+    - #### Query Parameter : 
+        - active : (bool) - fetch users list related to query
     """
     query : dict = {}
     try:
-        
         if active is not None:
             query.update(
                 {'active' : active}
@@ -52,7 +57,12 @@ async def get_user_detail(
         user_id : str | None = None
     ) -> UsersListResponse:
     """
-    This function get the specific user detail
+    ### This function get the specific user detail
+    -   fetch a specific user detail as user provided user_id in path \n
+        if user is available  with provided user_id then return this user \n
+        else return not found response
+    - #### Path Parameter : 
+        - user_id : (str) - fetch a specific user detail as per user_id
     """
     data = DBQuery().find(
         collection='users',
@@ -64,6 +74,7 @@ async def get_user_detail(
             response.status_code = status.HTTP_200_OK
             return data
         else:
+            print(data)
             response.status_code = status.HTTP_404_NOT_FOUND
             return {
                     'status' : 404,
@@ -88,9 +99,16 @@ async def create_user(
     user : UserInput
     ) -> UserResponse:
     """
-    This function creates a new user
+    ### This function creates a new user
+    -   username and password are required in body to create a user 
+        rest are optional \n
+    -   user password is stored in hashed value \n
+    -   if user provide invalid data then it shows Unprocessable entity 
+    - #### Body :
+        - user : (json) - include UserInput model data
     """
     try:
+        user.password = get_hashed_password(user.password)
         DBQuery().create(
             collection='users',
             data=dict(user)
@@ -115,7 +133,17 @@ def update_user(
     response : Response,
     user_id : str,
     update_data : UpdateUserModel
-    ):
+    ) -> UsersListResponse :
+    """
+    ### This function update the user details
+    -   If User provide invalid user id then return not found response
+    -   user can update only specific details are mentioned in
+        UpdateUserModel
+    - #### Path Parameter : 
+        - user_id : (str)
+    - #### Body :
+        - update_data : (json) - as per UpdateUserModel data includes
+    """
     try:
         data = DBQuery().update(
             collection='users',
@@ -150,13 +178,22 @@ def delete_user(
     response:Response,
     user_id : str
 ):
+    """
+    ### This function delete a specific user 
+    -   delete a user which user_id is provided in path
+    -   if user_id provided in path is not available then return 
+        not found response
+    -   if deleted successfully then simply return 204 no content
+    #### path Parameter : 
+        - user_id : (str) - user id which user want to delete
+    """
     try:
         data = DBQuery().delete(
                 collection='users',
                 query= {'id' : user_id}
             )
         if not data.get('status',None) == 404:
-            response.status_code = status.HTTP_200_OK
+            response.status_code = status.HTTP_204_NO_CONTENT
         else:
             response.status_code = status.HTTP_404_NOT_FOUND
         return data

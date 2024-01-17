@@ -10,7 +10,6 @@ from .commons import convert_json,generate_response
 from dbs.mongo.queries.commons import format_message
 from commons.responses import ERR_RESPONSES
 
-
 DB = ALL_DATABASES.get('users_db')
 
 def GET_DB_OBJ(db = DB):
@@ -23,7 +22,6 @@ def GET_DB_OBJ(db = DB):
             module=f"{__name__}.{inspect.stack()[0][3]}"
         )
     return ERR_RESPONSES.get(503,500)
-
 
 class DBQuery():
     def __init__(self):
@@ -52,8 +50,7 @@ class DBQuery():
                 cursor = self.DB_OBJ[collection].find_one(
                     query,
                     {"_id":0}
-                )
-                
+                )   
             cursor = convert_json(
                 cursor=cursor
                 )  
@@ -61,7 +58,6 @@ class DBQuery():
                 data=cursor
                 )
         except Exception as e:
-            print(e)
             create_db_log_message(
                 message=format_message(
                     f"""Error while fetching data from 
@@ -69,7 +65,10 @@ class DBQuery():
                 state=('info'),
                 module=f"{__name__}.{inspect.stack()[0][3]}"
             )
-        return ERR_RESPONSES.get(500,500)
+        raise HTTPException(
+            status_code=500,
+            detail="server connection error"
+        )
 
     def create(
             self,
@@ -105,7 +104,10 @@ class DBQuery():
                 state=('info'),
                 module=f"{__name__}.{inspect.stack()[0][3]}"
             )
-        return ERR_RESPONSES.get(500,500)
+        raise HTTPException(
+            status_code=500,
+            detail="server connection error"
+        )
 
     def update(
             self,
@@ -149,7 +151,10 @@ class DBQuery():
                 state=('error'),
                 module=f"{__name__}.{inspect.stack()[0][3]}"
             )
-        return ERR_RESPONSES.get(500,500)
+        raise HTTPException(
+            status_code=500,
+            detail="server connection error"
+        )
     
     def delete(
             self,
@@ -190,7 +195,7 @@ class DBQuery():
                 'body': []
             }
         except Exception as e:
-            return ERR_RESPONSES.get(500,500)
-        
-
-
+            raise HTTPException(
+                status_code=500,
+                detail="server connection error"
+            )
