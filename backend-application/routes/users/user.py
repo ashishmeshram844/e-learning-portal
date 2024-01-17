@@ -8,6 +8,10 @@ import inspect
 from routes.users.models import *
 from fastapi import Response,status
 from config.utils import get_hashed_password
+from fastapi.encoders import jsonable_encoder
+
+
+
 
 @user.get('/', response_model = UsersListResponse)
 async def get_users(
@@ -145,10 +149,12 @@ def update_user(
         - update_data : (json) - as per UpdateUserModel data includes
     """
     try:
+        # for partial update
+        update_data = update_data.dict(exclude_unset=True)
         data = DBQuery().update(
             collection='users',
             query= {'id' : user_id},
-            update_data=update_data.dict()
+            update_data=update_data
         )
         if data.get("body",None):
             response.status_code = status.HTTP_200_OK

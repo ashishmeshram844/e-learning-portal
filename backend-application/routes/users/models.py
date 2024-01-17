@@ -31,5 +31,7 @@ class UsersListResponse(BaseModel):
 
 
 class UpdateUserModel(BaseModel):
-    full_name : Annotated[str | None,Query(max_length=100)] = None
+    mobile : Optional[int | str]  
+    email : Optional[str] 
+    full_name : Optional[str] 
     updated : Optional[datetime | dict]  = Field(default=datetime.now())
