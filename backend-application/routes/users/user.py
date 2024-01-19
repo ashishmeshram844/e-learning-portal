@@ -7,7 +7,7 @@ from config.logger.all_loggers import create_user_log_message
 import inspect
 from routes.users.models import *
 from fastapi import Response,status
-from config.utils import get_hashed_password
+from config.jwt import get_hashed_password
 
 
 @user.get('/', response_model = UsersListResponse)
