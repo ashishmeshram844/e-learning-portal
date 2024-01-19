@@ -13,13 +13,13 @@ from .config.jwt import (
 from .modals import TokenInput, TokenResponse
 from .dependencies import get_current_user
 
-auth = APIRouter(
+authentication = APIRouter(
     prefix= '/auth',
     tags= ["Authentication"]
 )
 
-@auth.post('/token',response_model=TokenResponse)
-async def create_token_from_auth(
+@authentication.post('/token',response_model=TokenResponse)
+async def create_token(
     request : Request,
     response : Response,
     body_data:TokenInput
@@ -72,7 +72,7 @@ async def create_token_from_auth(
 
 
 
-@auth.get('/me')
+@authentication.get('/me')
 async def get_me(
     request : Request,
     user = Depends(get_current_user)):

@@ -1,16 +1,20 @@
-from fastapi import Request
-from routes.users.routes import user
+from fastapi import Request, APIRouter,Response,status
 from dbs.mongo.queries.user_query import DBQuery
-import json
 from fastapi.exceptions import HTTPException
 from config.logger.all_loggers import create_user_log_message
 import inspect
-from routes.users.models import *
-from fastapi import Response,status
-from config.jwt import get_hashed_password
+from applications.authentication.config.jwt import get_hashed_password
+from .modals import (
+    UsersListResponse, UserResponse, UserInput, 
+    UpdateUserModel
+)
 
+user_management = APIRouter(
+    prefix= '/users',
+    tags= ["User Management"]
+)
 
-@user.get('/', response_model = UsersListResponse)
+@user_management.get('/', response_model = UsersListResponse)
 async def get_users(
     request:Request,
     response : Response,
@@ -51,7 +55,7 @@ async def get_users(
         detail='server connection error'
         )
 
-@user.get('/{user_id}',response_model=UsersListResponse)
+@user_management.get('/{user_id}',response_model=UsersListResponse)
 async def get_user_detail(
         request:Request,
         response : Response,
@@ -93,7 +97,7 @@ async def get_user_detail(
         detail='server connection error'
     )
 
-@user.post('/', response_model = UserResponse)
+@user_management.post('/', response_model = UserResponse)
 async def create_user(
     request:Request,
     response : Response,
@@ -128,7 +132,7 @@ async def create_user(
         detail='server connection error'
     )
 
-@user.put('/{user_id}',response_model=UsersListResponse)
+@user_management.put('/{user_id}',response_model=UsersListResponse)
 def update_user(
     request:Request,
     response : Response,
@@ -175,7 +179,7 @@ def update_user(
     )
 
 
-@user.delete('/{user_id}')
+@user_management.delete('/{user_id}')
 def delete_user(
     request:Request,
     response:Response,

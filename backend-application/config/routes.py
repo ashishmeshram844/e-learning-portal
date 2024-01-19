@@ -1,7 +1,6 @@
-from routes.users.user import user
 from config.settings.base_settings import app
-from fastapi import APIRouter
+from applications.user_management.routes import user_management
+from applications.authentication.routes import authentication
 
-from applications.authentication.routes import auth
-app.include_router(user)
-app.include_router(auth)
+app.include_router(authentication)
+app.include_router(user_management)
