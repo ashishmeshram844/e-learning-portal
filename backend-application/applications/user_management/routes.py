@@ -8,13 +8,18 @@ from .modals import (
     UsersListResponse, UserResponse, UserInput, 
     UpdateUserModel
 )
+from .tables import USER_TABLES
 
 user_management = APIRouter(
     prefix= '/users',
     tags= ["User Management"]
 )
 
-@user_management.get('/', response_model = UsersListResponse)
+@user_management.get(
+        path='/', 
+        response_model = UsersListResponse,
+        summary="Get Users List"
+    )
 async def get_users(
     request:Request,
     response : Response,
@@ -36,12 +41,12 @@ async def get_users(
                 {'active' : active}
                 )
         data = DBQuery().find(
-            collection='users',
+            collection=USER_TABLES.get('users',None),
             query=query
         ) 
         response.status_code = status.HTTP_200_OK
         if not data.get('body',None):
-            response.status_code = status.HTTP_204_NO_CONTENT
+            response.status_code = status.HTTP_200_OK
         return data
     except Exception as e:
         create_user_log_message(
@@ -55,23 +60,27 @@ async def get_users(
         detail='server connection error'
         )
 
-@user_management.get('/{user_id}',response_model=UsersListResponse)
+@user_management.get(
+        path='/{id}',
+        response_model=UsersListResponse,
+        summary="Get User Detail"
+    )
 async def get_user_detail(
         request:Request,
         response : Response,
-        user_id : str | None = None
+        id : str | None = None
     ) -> UsersListResponse:
     """
     ### This function get the specific user detail
-    -   fetch a specific user detail as user provided user_id in path \n
-        if user is available  with provided user_id then return this user \n
+    -   fetch a specific user detail as user provided id in path \n
+        if user is available  with provided id then return this user \n
         else return not found response
     - #### Path Parameter : 
-        - user_id : (str) - fetch a specific user detail as per user_id
+        - id : (str) - fetch a specific user detail as per id
     """
     data = DBQuery().find(
-        collection='users',
-        query={'id' : user_id},
+        collection=USER_TABLES.get('users',None),
+        query={'id' : id},
         only_one=True
     )
     try:
@@ -79,7 +88,6 @@ async def get_user_detail(
             response.status_code = status.HTTP_200_OK
             return data
         else:
-            print(data)
             response.status_code = status.HTTP_404_NOT_FOUND
             return {
                     'status' : 404,
@@ -97,11 +105,15 @@ async def get_user_detail(
         detail='server connection error'
     )
 
-@user_management.post('/', response_model = UserResponse)
+@user_management.post(
+        path='/', 
+        response_model = UserResponse,
+        summary="Create New User"
+    )
 async def create_user(
     request:Request,
     response : Response,
-    user : UserInput
+    create_data : UserInput
     ) -> UserResponse:
     """
     ### This function creates a new user
@@ -113,13 +125,13 @@ async def create_user(
         - user : (json) - include UserInput model data
     """
     try:
-        user.password = get_hashed_password(user.password)
+        create_data.password = get_hashed_password(create_data.password)
         DBQuery().create(
-            collection='users',
-            data=dict(user)
+            collection=USER_TABLES.get('users',None),
+            data=dict(create_data)
         )
         response.status_code = status.HTTP_201_CREATED
-        return user
+        return create_data
     except Exception as e:
         create_user_log_message(
             message=f'failed to create users because : {e}',
@@ -132,11 +144,15 @@ async def create_user(
         detail='server connection error'
     )
 
-@user_management.put('/{user_id}',response_model=UsersListResponse)
+@user_management.put(
+        path='/{id}',
+        response_model=UsersListResponse,
+        summary="Update Role Details"    
+    )
 def update_user(
     request:Request,
     response : Response,
-    user_id : str,
+    id : str,
     update_data : UpdateUserModel
     ) -> UsersListResponse :
     """
@@ -145,7 +161,7 @@ def update_user(
     -   user can update only specific details are mentioned in
         UpdateUserModel
     - #### Path Parameter : 
-        - user_id : (str)
+        - id : (str)
     - #### Body :
         - update_data : (json) - as per UpdateUserModel data includes
     """
@@ -153,8 +169,8 @@ def update_user(
         # for partial update
         update_data = update_data.dict(exclude_unset=True)
         data = DBQuery().update(
-            collection='users',
-            query= {'id' : user_id},
+            collection=USER_TABLES.get('users',None),
+            query= {'id' : id},
             update_data=update_data
         )
         if data.get("body",None):
@@ -179,25 +195,28 @@ def update_user(
     )
 
 
-@user_management.delete('/{user_id}')
+@user_management.delete(
+        path='/{id}',
+        summary="Delete User"
+    )
 def delete_user(
     request:Request,
     response:Response,
-    user_id : str
+    id : str
 ):
     """
     ### This function delete a specific user 
-    -   delete a user which user_id is provided in path
-    -   if user_id provided in path is not available then return 
+    -   delete a user which id is provided in path
+    -   if id provided in path is not available then return 
         not found response
     -   if deleted successfully then simply return 204 no content
     #### path Parameter : 
-        - user_id : (str) - user id which user want to delete
+        - id : (str) - user id which user want to delete
     """
     try:
         data = DBQuery().delete(
-                collection='users',
-                query= {'id' : user_id}
+                collection=USER_TABLES.get('users',None),
+                query= {'id' : id}
             )
         if not data.get('status',None) == 404:
             response.status_code = status.HTTP_204_NO_CONTENT

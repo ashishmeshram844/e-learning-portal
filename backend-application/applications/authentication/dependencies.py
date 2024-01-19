@@ -16,14 +16,11 @@ async def get_current_user(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Token Required"
             )
-        payload = jwt.decode(
+        token_data = jwt.decode(
             token = token, 
             key= JWT_SECRET_KEY, 
             algorithms=[ALGORITHM]
         )
-        token_data = payload
-        print(token_data)
-        
         if datetime.fromtimestamp(token_data.get('exp')) < datetime.now():
             raise HTTPException(
                 status_code = status.HTTP_401_UNAUTHORIZED,

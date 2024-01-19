@@ -17,11 +17,15 @@ authentication = APIRouter(
     tags= ["Authentication"]
 )
 
-@authentication.post('/token',response_model=TokenResponse)
+@authentication.post(
+        path= '/token',
+        response_model=TokenResponse,
+        summary="Generate JWT Token"
+        )
 async def create_token(
     request : Request,
     response : Response,
-    body_data:TokenInput
+    body_data:TokenInput,
     ):
     """
     This api creates a token for user authentication
@@ -71,10 +75,17 @@ async def create_token(
 
 
 
-@authentication.get('/me')
-async def get_me(
+@authentication.get(
+        path='/me',
+        summary="Get Token Detail"
+    )
+async def get_token_user(
     request : Request,
     user = Depends(get_current_user)):
+    """
+    This function return the current user details which token
+    is provided in header
+    """
     try:
         return user
     except Exception as e:
