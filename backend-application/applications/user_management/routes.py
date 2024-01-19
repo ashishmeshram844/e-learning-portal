@@ -230,3 +230,6 @@ def delete_user(
             detail='server connection error'
         )
 
+
+
+
