@@ -1,49 +1,49 @@
-from fastapi import APIRouter,Request,Response,status
-from .modals import RolesInput, RolesListModel,UpdateRoleModel
+from fastapi import APIRouter,Request, Response,status
+from .modal import CreatePermissionModel,PermissionsListModel,UpdatePermissionModel
 from dbs.mongo.queries.user_query import DBQuery
-from .tables import ROLE_TABLES
+from .tables import PERMISSION_TABLE
 from fastapi.exceptions import HTTPException
 
-roles_management = APIRouter(
-    prefix= '/roles',
-    tags= ["Roles Management"]
+permissions_management = APIRouter(
+    prefix= '/permissions',
+    tags= ["Permissions Management"]
 )
 
-@roles_management.post(
-        path='/',
-        response_model=RolesInput,
-        summary="Create New Role"    
+@permissions_management.post(
+    path='/',
+    summary="Create New Permission"
     )
-def create_role(
+def create_permission(
     request : Request,
     response : Response,
-    create_data : RolesInput
+    create_data : CreatePermissionModel
     ):
     try:
         data = DBQuery().create(
-            collection=ROLE_TABLES.get('roles',None),
+            collection=PERMISSION_TABLE.get('permissions',None),
             data=create_data.dict()
         )
+        print(data)
         response.status_code = status.HTTP_201_CREATED
         return create_data.dict()
     except Exception as e:
         raise HTTPException(
-            status_code= status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='server connection error'
-        )
-
-@roles_management.get(
+        ) 
+    
+@permissions_management.get(
         path='/',
-        response_model=RolesListModel,
-        summary="Get All Roles List"
+        response_model=PermissionsListModel,
+        summary="Get All Permissions List"
     )
-def roles_list(
+def permission_list(
     request : Request,
     response : Response
     ):
     try:
         data = DBQuery().find(
-            collection=ROLE_TABLES.get('roles',None),
+            collection=PERMISSION_TABLE.get('permissions',None),
         )
         return data
     except Exception as e:
@@ -51,19 +51,19 @@ def roles_list(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='server connection error'
         )
-    
-@roles_management.get(
+ 
+@permissions_management.get(
         path='/{id}',
-        summary="Get Role Detail"
+        summary="Get Permission Detail"
     )
-def role_detail(
+def permission_detail(
     request : Request,
     response : Response,
     id : str 
     ):
     try:
         data = DBQuery().find(
-            collection=ROLE_TABLES.get('roles',None),
+            collection=PERMISSION_TABLE.get('permissions',None),
             query= {'id' : id},
             only_one=True
         )
@@ -80,18 +80,18 @@ def role_detail(
             detail='server connection error'
         )
     
-@roles_management.delete(
+@permissions_management.delete(
         path='/{id}',
-        summary="Delete Role"
+        summary="Delete Permission"
     )
-def delete_role(
+def delete_permission(
     request:Request,
     response:Response,
     id : str
 ):
     try:
         data = DBQuery().delete(
-                collection=ROLE_TABLES.get('roles',None),
+                collection=PERMISSION_TABLE.get('permissions',None),
                 query= {'id' : id}
             )
         if not data.get('status',None) == 404:
@@ -106,24 +106,22 @@ def delete_role(
             detail='server connection error'
         )
 
-
-
-@roles_management.put(
+@permissions_management.put(
         path='/{id}',
-        summary= "Update Role Details"
+        summary= "Update Permission Details"
     )
-def update_role(
+def update_permission(
     request:Request,
     response : Response,
     id : str,
-    update_data : UpdateRoleModel
+    update_data : UpdatePermissionModel
     )  :
   
     try:
         # for partial update
         update_data = update_data.dict(exclude_unset=True)
         data = DBQuery().update(
-            collection=ROLE_TABLES.get('roles',None),
+            collection=PERMISSION_TABLE.get('permissions',None),
             query= {'id' : id},
             update_data=update_data
         )
@@ -143,3 +141,4 @@ def update_role(
         status_code=500,
         detail='server connection error'
     )
+
