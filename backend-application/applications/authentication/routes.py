@@ -5,7 +5,6 @@ from fastapi import (
 from dbs.mongo.queries.user_query import DBQuery
 from .tables import AUTH_TABLES
 from .config.jwt import (
-    get_hashed_password,
     create_access_token,
     create_refresh_token,
     verify_password
