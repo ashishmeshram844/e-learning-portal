@@ -2,22 +2,18 @@ from pydantic import BaseModel
 from datetime import datetime
 import uuid
 
-
-class PermissionBaseModel(BaseModel):
+class GroupsBaseModel(BaseModel):
     name : str
 
-class CreatePermissionModel(PermissionBaseModel):
+class CreateGroupsModel(GroupsBaseModel):
     id : str = str(uuid.uuid4())
     created : datetime = datetime.now()
     updated : datetime = datetime.now()
     created_by : str
 
-
-class PermissionsListModel(BaseModel):
+class GroupsListModel(BaseModel):
     status : str
     body : list  = []
 
-
-
-class UpdatePermissionModel(BaseModel):
+class UpdateGroupsModel(BaseModel):
     name : str | None

@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class ApiMethodsInput(BaseModel):
-    methods : list | None 
+    methods : list[str] | None 
 
 class ApiAvailDataModal(BaseModel):
     path : str

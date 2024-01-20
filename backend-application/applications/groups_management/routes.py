@@ -1,26 +1,26 @@
 from fastapi import APIRouter,Request, Response,status
-from .modal import CreatePermissionModel,PermissionsListModel,UpdatePermissionModel
+from .modal import CreateGroupsModel,GroupsListModel,UpdateGroupsModel
 from dbs.mongo.queries.user_query import DBQuery
-from .tables import PERMISSION_TABLE
+from .tables import GROUPS_TABLE
 from fastapi.exceptions import HTTPException
 
-permissions_management = APIRouter(
-    prefix= '/permissions',
-    tags= ["Permissions Management"]
+group_management = APIRouter(
+    prefix= '/groups',
+    tags= ["Groups Management"]
 )
 
-@permissions_management.post(
+@group_management.post(
     path='/',
-    summary="Create New Permission"
+    summary="Create New Group"
     )
-def create_permission(
+def create_group(
     request : Request,
     response : Response,
-    create_data : CreatePermissionModel
+    create_data : CreateGroupsModel
     ):
     try:
         data = DBQuery().create(
-            collection=PERMISSION_TABLE.get('permissions',None),
+            collection=GROUPS_TABLE.get('groups',None),
             data=create_data.dict()
         )
         print(data)
@@ -32,18 +32,18 @@ def create_permission(
             detail='server connection error'
         ) 
     
-@permissions_management.get(
+@group_management.get(
         path='/',
-        response_model=PermissionsListModel,
-        summary="Get All Permissions List"
+        response_model=GroupsListModel,
+        summary="Get All groups List"
     )
-def permission_list(
+def groups_list(
     request : Request,
     response : Response
     ):
     try:
         data = DBQuery().find(
-            collection=PERMISSION_TABLE.get('permissions',None),
+            collection=GROUPS_TABLE.get('groups',None),
         )
         return data
     except Exception as e:
@@ -52,18 +52,18 @@ def permission_list(
             detail='server connection error'
         )
  
-@permissions_management.get(
+@group_management.get(
         path='/{id}',
-        summary="Get Permission Detail"
+        summary="Get Group Detail"
     )
-def permission_detail(
+def group_detail(
     request : Request,
     response : Response,
     id : str 
     ):
     try:
         data = DBQuery().find(
-            collection=PERMISSION_TABLE.get('permissions',None),
+            collection=GROUPS_TABLE.get('groups',None),
             query= {'id' : id},
             only_one=True
         )
@@ -80,18 +80,18 @@ def permission_detail(
             detail='server connection error'
         )
     
-@permissions_management.delete(
+@group_management.delete(
         path='/{id}',
-        summary="Delete Permission"
+        summary="Delete Group"
     )
-def delete_permission(
+def delete_group(
     request:Request,
     response:Response,
     id : str
 ):
     try:
         data = DBQuery().delete(
-                collection=PERMISSION_TABLE.get('permissions',None),
+                collection=GROUPS_TABLE.get('groups',None),
                 query= {'id' : id}
             )
         if not data.get('status',None) == 404:
@@ -106,22 +106,22 @@ def delete_permission(
             detail='server connection error'
         )
 
-@permissions_management.put(
+@group_management.put(
         path='/{id}',
-        summary= "Update Permission Details"
+        summary= "Update group Details"
     )
-def update_permission(
+def update_group(
     request:Request,
     response : Response,
     id : str,
-    update_data : UpdatePermissionModel
+    update_data : UpdateGroupsModel
     ):
   
     try:
         # for partial update
         update_data = update_data.dict(exclude_unset=True)
         data = DBQuery().update(
-            collection=PERMISSION_TABLE.get('permissions',None),
+            collection=GROUPS_TABLE.get('groups',None),
             query= {'id' : id},
             update_data=update_data
         )
@@ -141,4 +141,5 @@ def update_permission(
         status_code=500,
         detail='server connection error'
     )
+
 

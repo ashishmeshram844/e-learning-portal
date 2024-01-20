@@ -23,6 +23,11 @@ def get_apis_list(
     response : Response,
     body_data : ApiMethodsInput,
     ):
+    """
+    ### This api gives all available apis list
+    #### Body :
+    - methods : (array) 
+    """
     try:
         body_methods = body_data.methods
         if not body_methods:
@@ -61,13 +66,11 @@ def get_apis_list(
             status_code= status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail = "server connection error"
         )
-    
-
-
 
 @apis_management.head(
         path='/reset_all_api',
         summary='Reset all api endpoints in db',    
+        include_in_schema=False
     )
 def reset_all_apis_in_db(
     request : Request,
