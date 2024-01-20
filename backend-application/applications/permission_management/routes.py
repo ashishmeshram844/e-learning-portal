@@ -115,7 +115,7 @@ def update_permission(
     response : Response,
     id : str,
     update_data : UpdatePermissionModel
-    )  :
+    ):
   
     try:
         # for partial update

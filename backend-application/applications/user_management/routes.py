@@ -1,4 +1,4 @@
-from fastapi import Request, APIRouter,Response,status
+from fastapi import Request, APIRouter,Response,status, Depends
 from dbs.mongo.queries.user_query import DBQuery
 from fastapi.exceptions import HTTPException
 from config.logger.all_loggers import create_user_log_message
@@ -60,6 +60,7 @@ async def get_users(
         detail='server connection error'
         )
 
+
 @user_management.get(
         path='/{id}',
         response_model=UsersListResponse,
@@ -68,8 +69,8 @@ async def get_users(
 async def get_user_detail(
         request:Request,
         response : Response,
-        id : str | None = None
-    ) -> UsersListResponse:
+        id : str | None = None,
+    ) :
     """
     ### This function get the specific user detail
     -   fetch a specific user detail as user provided id in path \n
