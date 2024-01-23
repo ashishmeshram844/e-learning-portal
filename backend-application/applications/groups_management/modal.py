@@ -17,3 +17,15 @@ class GroupsListModel(BaseModel):
 
 class UpdateGroupsModel(BaseModel):
     name : str | None
+
+from applications.apis_management.modals import ApiAvailDataModal
+
+class AddPermissionsInGroupModal(BaseModel):
+    id : str
+    api_permissions : list[str]
+
+    
+
+
+
+

@@ -1,8 +1,12 @@
 from fastapi import APIRouter,Request, Response,status
-from .modal import CreateGroupsModel,GroupsListModel,UpdateGroupsModel
+from .modal import CreateGroupsModel,GroupsListModel,UpdateGroupsModel, AddPermissionsInGroupModal
 from dbs.mongo.queries.user_query import DBQuery
 from .tables import GROUPS_TABLE
 from fastapi.exceptions import HTTPException
+from applications.permissions_management.routes import add_permission
+
+
+
 
 group_management = APIRouter(
     prefix= '/groups',
@@ -141,5 +145,62 @@ def update_group(
         status_code=500,
         detail='server connection error'
     )
+
+
+
+@group_management.post(
+        path='/permissions/add',
+        summary="Add Permissions in a Group"
+    )
+def add_permission_in_group(
+    request : Request,
+    response : Response,
+    update_data : AddPermissionsInGroupModal
+    ):
+    """
+    This api remove all previous permissions and add new permissions 
+    onlly  which provided in body.
+    """
+    try:
+        update_data = update_data.dict(exclude_unset=True)
+        api_permissions_ids = update_data.get('api_permissions')
+        api_objects = DBQuery().find(
+            collection=GROUPS_TABLE.get('apis'),
+            query={"id" : {"$in" : api_permissions_ids}}
+        )
+
+        if not api_objects.get('body'):
+            return {
+                'status' : status.HTTP_404_NOT_FOUND,
+                'message' : "permissions not found",
+                'body' : []
+            }
+        data = add_permission(
+            target='groups',
+            target_id=update_data.get('id'),
+            data={'permissions' : api_objects.get('body')}
+        )
+        if not data.get('body'):
+            response.status_code = status.HTTP_404_NOT_FOUND
+        return data
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail='server connection error'
+        )
+
+
+@group_management.put('/permissions/update')
+def update_permissions_in_groups(
+    request : Request,
+    response : Response,
+    update_data : AddPermissionsInGroupModal
+    ):
+    update_data = update_data.dict(exclude_unset=True)
+    api_permissions_ids = update_data.get('api_permissions')
+
+    return {
+        'msg' : "update permissions in group"  
+    }
 
 

@@ -1,3 +1,4 @@
 GROUPS_TABLE = {
-    'groups' : 'groups'
+    'groups' : 'groups',
+    'apis' : 'apis'
 }

@@ -4,6 +4,10 @@ from fastapi.exceptions import HTTPException
 from .modals import ApiMethodsInput, ApiListResponse
 from dbs.mongo.get_db import get_db
 from dbs.db_names import ALL_DATABASES
+import uuid
+from dbs.mongo.queries.commons import convert_json, generate_response
+from dbs.mongo.queries.user_query import DBQuery
+
 
 
 API_PROJECT_IP = "127.0.0.1:5000"
@@ -37,26 +41,27 @@ def get_apis_list(
                 'body' : []
             }
         apis_list = list()
-        for route in request.app.routes:
+
+        all_db_apis =  DBQuery().find(
+            collection='apis'
+        )
+        for route in all_db_apis.get('body'):
             check_avail =  any(
-                    [ True if req_mtd.upper() in route.methods else False 
+                    [ True if req_mtd.upper() in route.get('method') else False 
                         for req_mtd in body_methods 
                     ]
                 )
             if not check_avail:
                 continue
-            api_summary = None
-            try:api_summary = route.summary
-            except:pass
             apis_list.append( 
                 {
-                    'path': f'http://{API_PROJECT_IP}{route.path}', 
-                    'name': route.name,
-                    'summary' : api_summary,
-                    'method' : route.methods
+                    'id' : route.get('id'),
+                    'path': route.get('path'), 
+                    'name': route.get('name'),
+                    'summary' : route.get('summary'),
+                    'method' : route.get('method')
                 }
             )
-
         return {
             'status' : status.HTTP_200_OK,
             'body' : apis_list
@@ -83,7 +88,7 @@ def reset_all_apis_in_db(
             try:api_summary = route.summary
             except:pass
             apis_list.append( 
-                {
+                {   'id' : str(uuid.uuid4()),
                     'path': f'http://{API_PROJECT_IP}{route.path}', 
                     'name': route.name,
                     'summary' : api_summary,
@@ -106,3 +111,4 @@ def reset_all_apis_in_db(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='server connection error'
         )
+    

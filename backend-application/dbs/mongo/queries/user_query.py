@@ -116,7 +116,7 @@ class DBQuery():
             self,
             collection : str | None = None,
             query : dict = {},
-            update_data : dict  = {}
+            update_data : dict | list  = {}
         ):
         """
         This function update the data from provided collection and qeury
@@ -128,7 +128,7 @@ class DBQuery():
                 )
             cursor = convert_json(
                 cursor=cursor
-                )        
+                )  
             if cursor:
                 update_query = { 
                     "$set": update_data

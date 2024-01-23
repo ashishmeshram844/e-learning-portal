@@ -1,10 +1,11 @@
 from pydantic import BaseModel
-
+import uuid
 
 class ApiMethodsInput(BaseModel):
-    methods : list[str] | None 
+    methods : list[str]  
 
 class ApiAvailDataModal(BaseModel):
+    id : str
     path : str
     name : str
     summary : str | None  = None
@@ -13,3 +14,6 @@ class ApiAvailDataModal(BaseModel):
 class ApiListResponse(BaseModel):
     status : int 
     body : list[ApiAvailDataModal]
+
+
+
