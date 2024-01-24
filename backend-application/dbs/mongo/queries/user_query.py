@@ -202,3 +202,39 @@ class DBQuery():
                 status_code=500,
                 detail="server connection error"
             )
+
+
+
+    def update_set_to(
+            self,
+            collection : str | None = None,
+            query : dict | None = None,
+            update_data : list | None = None
+        ):
+        try:
+            update_data_query = {
+                '$push': {'permissions': {"$each" : update_data * 1}}
+            }
+            # print(update_data_query)
+            if collection and query and update_data:
+                cursor = self.DB_OBJ[collection].update_one(
+                    query,
+                    update_data_query
+
+                )
+                cursor = convert_json(
+                    cursor=cursor
+                    )      
+                print(cursor)
+                return cursor
+            else:
+                raise HTTPException(
+                    status_code=500,
+                    detail='server connection error'
+                )
+        except Exception as e:
+            print("AA : ",e)
+            raise HTTPException(
+                    status_code=500,
+                    detail='server connection error'
+                )

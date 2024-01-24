@@ -3,9 +3,7 @@ from .modal import CreateGroupsModel,GroupsListModel,UpdateGroupsModel, AddPermi
 from dbs.mongo.queries.user_query import DBQuery
 from .tables import GROUPS_TABLE
 from fastapi.exceptions import HTTPException
-from applications.permissions_management.routes import add_permission
-
-
+from applications.permissions_management.routes import add_permission, update_permission
 
 
 group_management = APIRouter(
@@ -148,6 +146,10 @@ def update_group(
 
 
 
+
+
+############### groups permissions apis ################
+
 @group_management.post(
         path='/permissions/add',
         summary="Add Permissions in a Group"
@@ -164,11 +166,16 @@ def add_permission_in_group(
     try:
         update_data = update_data.dict(exclude_unset=True)
         api_permissions_ids = update_data.get('api_permissions')
+        if not api_permissions_ids:
+            response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+            return {
+                'status' : 422,
+                'message' : "permissions object not provided"
+            }
         api_objects = DBQuery().find(
             collection=GROUPS_TABLE.get('apis'),
             query={"id" : {"$in" : api_permissions_ids}}
         )
-
         if not api_objects.get('body'):
             return {
                 'status' : status.HTTP_404_NOT_FOUND,
@@ -196,11 +203,37 @@ def update_permissions_in_groups(
     response : Response,
     update_data : AddPermissionsInGroupModal
     ):
-    update_data = update_data.dict(exclude_unset=True)
-    api_permissions_ids = update_data.get('api_permissions')
+    try:
+        update_data = update_data.dict(exclude_unset=True)
+        api_permissions_ids = update_data.get('api_permissions')
+        if not api_permissions_ids:
+            response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+            return {
+                'status' : 422,
+                'message' : "permissions object not provided"
+            }
+        api_objects = DBQuery().find(
+                collection=GROUPS_TABLE.get('apis'),
+                query={"id" : {"$in" : api_permissions_ids}}
+            )
+        if not  api_objects.get('body'):
+            response.status_code = status.HTTP_404_NOT_FOUND
+            return {
+                'status' : status.HTTP_404_NOT_FOUND,
+                'body' : []
+            }
+        data = update_permission(
+            target=GROUPS_TABLE.get('groups'),
+            target_id=update_data.get('id'),
+            data=api_objects.get('body')
+        )
+        return data
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail='server connection error'
+        )
 
-    return {
-        'msg' : "update permissions in group"  
-    }
+
 
 
