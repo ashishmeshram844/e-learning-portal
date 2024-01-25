@@ -1,5 +1,9 @@
 """
 Contain all api routes for api managements
+- This module help to define permissions on api level 
+- minor level permissions objects on every apis endpoints
+- get all apis list
+- reset all apis list
 """
 
 from fastapi import APIRouter,Request,Response,status
@@ -18,7 +22,7 @@ API_PROJECT_IP = "127.0.0.1:5000"
 
 apis_management = APIRouter(
     prefix= '/apis',
-    tags= ["Apis Management"]
+    tags= ["Apis Management"],
 )
 
 @apis_management.get(
@@ -33,6 +37,8 @@ def get_apis_list(
     ):
     """
     ### This api gives all available apis list
+    - Client can access this endpoints response if they have permissions\n
+    then only they can access else unauthorized reponse 
     #### Body :
     - methods : (array) 
     """
@@ -45,7 +51,6 @@ def get_apis_list(
                 'body' : []
             }
         apis_list = list()
-
         all_db_apis =  DBQuery().find(
             collection='apis'
         )
@@ -87,6 +92,8 @@ def reset_all_apis_in_db(
     ):
     """
     This api reset all api objects in apis collections
+    - this delete all previous objects and add new objects again 
+    - note :  ids of this objects will be chnaged everytime whenever we reset
     """
     try:
         apis_list = list()
