@@ -33,6 +33,12 @@ def create_group(
     response : Response,
     create_data : CreateGroupsModel
     ):
+    """
+    creates a new group
+    - this api create new group as per user provided data
+    - Body : 
+        - created_data  : CreateGroupModalData (this modal contain fields) 
+    """
     try:
         data = DBQuery().create(
             collection=GROUPS_TABLE.get('groups',None),
@@ -56,6 +62,9 @@ def groups_list(
     request : Request,
     response : Response
     ):
+    """
+    fetch a list of all available groups
+    """
     try:
         data = DBQuery().find(
             collection=GROUPS_TABLE.get('groups',None),
@@ -76,6 +85,11 @@ def group_detail(
     response : Response,
     id : str 
     ):
+    """
+    Fetch group detail of a specific group
+    - Path Parameter : 
+        - id : str (group id)
+    """
     try:
         data = DBQuery().find(
             collection=GROUPS_TABLE.get('groups',None),
@@ -103,7 +117,12 @@ def delete_group(
     request:Request,
     response:Response,
     id : str
-):
+    ):
+    """
+    Delete the specific group
+    - Path Parameter  : 
+        - id : str (group id)
+    """
     try:
         data = DBQuery().delete(
                 collection=GROUPS_TABLE.get('groups',None),
@@ -131,7 +150,13 @@ def update_group(
     id : str,
     update_data : UpdateGroupsModel
     ):
-  
+    """
+    Update the specific group details
+    - Path Parameter  : 
+        - id : str (group id)
+    - Body : 
+        - update_data : UpdateGroupModal (this modal contain all available  fields )
+    """
     try:
         # for partial update
         update_data = update_data.dict(exclude_unset=True)
