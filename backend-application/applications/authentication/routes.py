@@ -1,3 +1,10 @@
+"""
+Contains all authentications related apis 
+- JWT Token is used
+- token generations
+- get user from token
+"""
+
 from fastapi import (
     Request, Response, status, 
     APIRouter, HTTPException, Depends
