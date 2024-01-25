@@ -182,10 +182,6 @@ def update_group(
         detail='server connection error'
     )
 
-
-
-
-
 ############### groups permissions apis ################
 
 @group_management.post(
@@ -200,6 +196,8 @@ def add_permission_in_group(
     """
     This api remove all previous permissions and add new permissions 
     onlly  which provided in body.
+    - Body : 
+        - update_data : this contain group id and all permissions list
     """
     try:
         update_data = update_data.dict(exclude_unset=True)
@@ -241,6 +239,11 @@ def update_permissions_in_groups(
     response : Response,
     update_data : AddPermissionsInGroupModal
     ):
+    """
+    This api adds the extra permissions in group
+    - Body : 
+        - update_data : contain group id and list for permissions id
+    """
     try:
         update_data = update_data.dict(exclude_unset=True)
         api_permissions_ids = update_data.get('api_permissions')
@@ -272,16 +275,18 @@ def update_permissions_in_groups(
             detail='server connection error'
         )
 
-
-
-
-
 @group_management.put('/permissions/remove')
 def remove_permissions_in_groups(
     request : Request,
     response : Response,
     update_data : AddPermissionsInGroupModal
     ):
+    """
+    This api removes some permissions from group
+    - Body : 
+        - update_data : contain group id and list of permissions id
+        which we want to remove
+    """
     try:
         update_data = update_data.dict(exclude_unset=True)
         api_permissions_ids = update_data.get('api_permissions')
