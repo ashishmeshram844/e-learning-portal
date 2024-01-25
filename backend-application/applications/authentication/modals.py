@@ -16,7 +16,7 @@ class TokenInput(BaseModel):
 
 class TokenResponse(BaseModel):
     """
-    Sample response modal for token response 
+    Sample response modal for token response
     """
     access_token :str
     refresh_token : str

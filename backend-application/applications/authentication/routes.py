@@ -90,7 +90,7 @@ async def get_token_user(
     request : Request,
     user = Depends(get_current_user)):
     """
-    This function return the current user details which token
+    This function return the current user details which token 
     is provided in header
     """
     try:
