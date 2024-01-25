@@ -209,12 +209,18 @@ class DBQuery():
             self,
             collection : str | None = None,
             query : dict | None = None,
-            update_data : list | None = None
+            update_data : list | None = None,
+            remove = None
         ):
         try:
-            update_data_query = {
-                '$push': {'permissions': {"$each" : update_data * 1}}
-            }
+            if not remove:
+                update_data_query = {
+                    '$push': {'permissions': {"$each" : update_data * 1}}
+                }
+            else:
+                update_data_query = {
+                    '$pull': {'permissions': {"path" :{"$in" :  update_data }}}
+                }
             # print(update_data_query)
             if collection and query and update_data:
                 cursor = self.DB_OBJ[collection].update_one(
@@ -225,7 +231,6 @@ class DBQuery():
                 cursor = convert_json(
                     cursor=cursor
                     )      
-                print(cursor)
                 return cursor
             else:
                 raise HTTPException(

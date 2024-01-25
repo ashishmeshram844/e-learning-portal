@@ -237,3 +237,45 @@ def update_permissions_in_groups(
 
 
 
+
+@group_management.put('/permissions/remove')
+def remove_permissions_in_groups(
+    request : Request,
+    response : Response,
+    update_data : AddPermissionsInGroupModal
+    ):
+    try:
+        update_data = update_data.dict(exclude_unset=True)
+        api_permissions_ids = update_data.get('api_permissions')
+        if not api_permissions_ids:
+            response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+            return {
+                'status' : 422,
+                'message' : "permissions object not provided"
+            }
+        api_objects = DBQuery().find(
+                collection=GROUPS_TABLE.get('apis'),
+                query={"id" : {"$in" : api_permissions_ids}}
+            )
+        if not  api_objects.get('body'):
+            response.status_code = status.HTTP_404_NOT_FOUND
+            return {
+                'status' : status.HTTP_404_NOT_FOUND,
+                'body' : []
+            }
+        data = update_permission(
+            target=GROUPS_TABLE.get('groups'),
+            target_id=update_data.get('id'),
+            data=api_objects.get('body'),
+            remove = True
+        )
+        return data
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail='server connection error'
+        )
+
+
+
+

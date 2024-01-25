@@ -1,3 +1,7 @@
+"""
+Contain all api routes for api managements
+"""
+
 from fastapi import APIRouter,Request,Response,status
 from .tables import APIS_TABLES
 from fastapi.exceptions import HTTPException
@@ -7,7 +11,7 @@ from dbs.db_names import ALL_DATABASES
 import uuid
 from dbs.mongo.queries.commons import convert_json, generate_response
 from dbs.mongo.queries.user_query import DBQuery
-
+from config.logger.all_loggers import create_user_log_message
 
 
 API_PROJECT_IP = "127.0.0.1:5000"
@@ -81,6 +85,9 @@ def reset_all_apis_in_db(
     request : Request,
     response : Response,
     ):
+    """
+    This api reset all api objects in apis collections
+    """
     try:
         apis_list = list()
         for route in request.app.routes:
@@ -112,3 +119,5 @@ def reset_all_apis_in_db(
             detail='server connection error'
         )
     
+
+

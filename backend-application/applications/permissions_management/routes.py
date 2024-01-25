@@ -37,25 +37,18 @@ def add_permission(
             'status' : status.HTTP_404_NOT_FOUND,
             'body' : []
         }
-    
     except Exception as e:
-        # print(e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='server connection error'
         )
 
-
-
-
-
-
 def update_permission(
     target : str = None,
     target_id : str = None,
-    data : dict = {}
+    data : dict = {},
+    remove = None
     ):
-    # print("parsed permissions : " ,data)
     try:
         if not target:
             raise HTTPException(
@@ -67,7 +60,7 @@ def update_permission(
             collection=target,
             query={'id' : target_id},
             only_one=True
-        )      
+        )    
         if not target_object.get('body'):
             return {
                 'status' : 404,
@@ -80,29 +73,29 @@ def update_permission(
             print(e)
         set_to_data =list()
         for counter,parsed_per in enumerate(data):
-            if parsed_per.get('path') not in old_permissions_endpoints:
-                set_to_data.append(parsed_per)
-        ### add update set to with query
+            if not remove:
+                if parsed_per.get('path') not in old_permissions_endpoints:
+                    set_to_data.append(parsed_per)
+            else:
+                if parsed_per.get('path')  in old_permissions_endpoints:
+                    set_to_data.append(parsed_per.get('path',None))
         if not set_to_data:
             return {
                 'status' : 422,
-                'message' : 'no new permission provided or permission already added'
+                'message' : 'no new permission provided'
             }
         res = DBQuery().update_set_to(
             collection= target,
             query={"id" : target_id},
-            update_data=set_to_data
+            update_data=set_to_data,
+            remove = remove
             )
-
         target_object = DBQuery().find(
             collection=target,
             query={'id' : target_id},
             only_one=True
         )
-
         return target_object
-
-
     except Exception as e:
         # print(e)
         raise HTTPException(

@@ -1,6 +1,7 @@
 from fastapi import Request
 from fastapi import FastAPI
 
+
 app = FastAPI(  docs_url=None, 
                 redoc_url='/docs',
                 title="E Learning Portal",
@@ -8,3 +9,4 @@ app = FastAPI(  docs_url=None,
                 description="### E learning portal Api's Documentation",
                 openapi_url="/e-learning-portal-schema",
             ) 
+
