@@ -16,6 +16,7 @@ import uuid
 from dbs.mongo.queries.commons import convert_json, generate_response
 from dbs.mongo.queries.user_query import DBQuery
 from config.logger.all_loggers import create_user_log_message
+import inspect
 
 
 API_PROJECT_IP = "127.0.0.1:5000"
@@ -54,32 +55,31 @@ def get_apis_list(
         all_db_apis =  DBQuery().find(
             collection='apis'
         )
-        for route in all_db_apis.get('body'):
-            check_avail =  any(
-                    [ True if req_mtd.upper() in route.get('method') else False 
-                        for req_mtd in body_methods 
-                    ]
-                )
-            if not check_avail:
-                continue
-            apis_list.append( 
-                {
-                    'id' : route.get('id'),
-                    'path': route.get('path'), 
-                    'name': route.get('name'),
-                    'summary' : route.get('summary'),
-                    'method' : route.get('method')
-                }
-            )
+        apis_list = [
+            {
+                'id': route['id'],
+                'path': route['path'],
+                'name': route['name'],
+                'summary': route['summary'],
+                'method': route['method']
+            }
+            for route in all_db_apis.get('body', [])
+            if any(req_mtd.upper() in route['method'] for req_mtd in body_methods)
+        ]
         return {
             'status' : status.HTTP_200_OK,
             'body' : apis_list
         }
     except Exception as e:
-        raise HTTPException(
-            status_code= status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail = "server connection error"
+        create_user_log_message(
+            message=f'failed to get apis list because : {e}',
+            state="error",
+            module=f"{__name__}.{inspect.stack()[0][3]}"
         )
+    raise HTTPException(
+        status_code= status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail = "server connection error"
+    )
 
 @apis_management.head(
         path='/reset_all_api',
