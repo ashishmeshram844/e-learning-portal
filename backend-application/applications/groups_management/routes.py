@@ -1,9 +1,22 @@
+"""
+contains all apis for group management
+- create group
+- get all groups
+- get group detail
+- delete group
+- update group
+"""
+
 from fastapi import APIRouter,Request, Response,status
-from .modal import CreateGroupsModel,GroupsListModel,UpdateGroupsModel, AddPermissionsInGroupModal
+from .modal import ( CreateGroupsModel,GroupsListModel,
+    UpdateGroupsModel, AddPermissionsInGroupModal
+)
 from dbs.mongo.queries.user_query import DBQuery
 from .tables import GROUPS_TABLE
 from fastapi.exceptions import HTTPException
-from applications.permissions_management.routes import add_permission, update_permission
+from applications.permissions_management.routes import (
+    add_permission, update_permission
+)
 
 
 group_management = APIRouter(
