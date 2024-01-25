@@ -126,5 +126,3 @@ def reset_all_apis_in_db(
             detail='server connection error'
         )
     
-
-

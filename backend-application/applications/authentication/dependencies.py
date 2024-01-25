@@ -9,7 +9,12 @@ from .config.jwt import ALGORITHM,JWT_SECRET_KEY
 
 async def get_current_user(
         token: Annotated[str | None, Header()] = None,
-        ):
+    ):
+    """
+    ### This function gets the current user object as per tokern provided
+    - #### Parameters : 
+        - token : Jwt access token generated using generate token endpoint
+    """
     try:
         if not token:
             raise HTTPException(
@@ -33,7 +38,6 @@ async def get_current_user(
             detail="Invalidate token",
             headers={"WWW-Authenticate": "Bearer"},
         )
-
     user = DBQuery().find(
         collection='users',
         query={
