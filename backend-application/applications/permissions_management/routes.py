@@ -139,9 +139,9 @@ def update_permissions_in_role(
     update_data : AddPermissionsModal
     ):
     """
-    This api adds the extra permissions in group
+    This api adds the extra permissions in role
     - Body : 
-        - update_data : contain group id and list for permissions id
+        - update_data : contain role id and list for permissions id
     """
     try:
         data = update_permission_in_target(
@@ -164,9 +164,9 @@ def remove_permissions_in_role(
     update_data : AddPermissionsModal
     ):
     """
-    This api removes some permissions from group
+    This api removes some permissions from role
     - Body : 
-        - update_data : contain group id and list of permissions id
+        - update_data : contain role id and list of permissions id
         which we want to remove
     """
     try:
