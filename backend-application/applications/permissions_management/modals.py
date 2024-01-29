@@ -10,7 +10,7 @@ import uuid
 
 from applications.apis_management.modals import ApiAvailDataModal
 
-class AddPermissionsInGroupModal(BaseModel):
+class AddPermissionsModal(BaseModel):
     """
     Sample request modal while adding permission in group
     - request should contains this modal fields while adding permission

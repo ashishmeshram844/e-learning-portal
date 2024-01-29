@@ -18,7 +18,6 @@ class CreateGroupsModel(GroupsBaseModel):
     - equest data as per this modal while creating group
     """
     id : str = str(uuid.uuid4())
-    permissions : list = []
     created : datetime = datetime.now()
     updated : datetime = datetime.now()
     created_by : str

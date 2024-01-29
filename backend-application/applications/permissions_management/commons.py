@@ -1,19 +1,29 @@
-from fastapi import status
+from fastapi import status,Response
 from dbs.mongo.queries.user_query import DBQuery
 from fastapi.exceptions import HTTPException
+from .tables import PERMISSIONS_TABLE
+
+
 
 def add_permission(
     target : str = None,
     target_id : str = None,
     data : dict = {}
     ):
+    """
+    This function revoke old permissions and add new permissions
+    which user provided in body
+    - Path Parameter : 
+        - target : str (its a collection name )
+    - Body : 
+        - data : list (list of permissions)
+    """
     try:
         if not target:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail='server connection error'
             )
-        # update  permissions 
         response_data = DBQuery().update(
             collection=target,
             query={'id' : target_id},
@@ -47,7 +57,6 @@ def update_permission(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail='server connection error'
             )
-        # update  permissions 
         target_object = DBQuery().find(
             collection=target,
             query={'id' : target_id},
@@ -64,7 +73,7 @@ def update_permission(
         except Exception as e:
             print(e)
         set_to_data =list()
-        for counter,parsed_per in enumerate(data):
+        for parsed_per in data:
             if not remove:
                 if parsed_per.get('path') not in old_permissions_endpoints:
                     set_to_data.append(parsed_per)
@@ -94,3 +103,123 @@ def update_permission(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='server connection error'
         )
+
+def get_api_permissions_objects(
+    response = Response,
+    update_data = None
+    ):
+    try:
+        update_data = update_data.dict(exclude_unset=True)
+        api_permissions_ids = update_data.get('api_permissions')
+        if not api_permissions_ids:
+            response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+            return {
+                'status' : 422,
+                'message' : "permissions object not provided"
+            }
+        api_objects = DBQuery().find(
+            collection=PERMISSIONS_TABLE.get('apis'),
+            query={"id" : {"$in" : api_permissions_ids}}
+        )
+        return api_objects
+    except Exception as e:
+        pass
+    return []
+
+def add_permission_in_target(
+    response = Response,
+    update_data = None,
+    target = None    
+    ):
+    try:
+        if update_data and target:
+            api_objects = get_api_permissions_objects(
+                response=response,
+                update_data=update_data
+            )
+           
+            if not api_objects.get('body'):
+                return {
+                    'status' : status.HTTP_404_NOT_FOUND,
+                    'message' : "permissions not found",
+                    'body' : []
+                }
+            data = add_permission(
+                target=target,
+                target_id=update_data.get('id'),
+                data={'permissions' : api_objects.get('body')}
+            )
+            if not data.get('body'):
+                response.status_code = status.HTTP_404_NOT_FOUND
+            return data
+    except Exception as e:
+        pass  
+    raise HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail='server connection error'
+    )
+
+
+def update_permission_in_target(
+        response = Response,
+        update_data = None,
+        target = None
+):
+    try:
+        if update_data and target:
+            api_objects = get_api_permissions_objects(
+                response=response,
+                update_data=update_data
+            )
+            if not  api_objects.get('body'):
+                response.status_code = status.HTTP_404_NOT_FOUND
+                return {
+                    'status' : status.HTTP_404_NOT_FOUND,
+                    'body' : []
+                }
+            data = update_permission(
+                target=target,
+                target_id=update_data.get('id'),
+                data=api_objects.get('body')
+            )
+            return data
+    except Exception as e:
+        pass    
+    raise HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail='server connection error'
+    )
+
+
+
+def remove_permission_in_target(
+    response = Response,
+    update_data = None,
+    target = None    
+    ):
+    try:
+        if update_data and target:
+            api_objects = get_api_permissions_objects(
+                response=response,
+                update_data=update_data
+            )
+            if not  api_objects.get('body'):
+                response.status_code = status.HTTP_404_NOT_FOUND
+                return {
+                    'status' : status.HTTP_404_NOT_FOUND,
+                    'body' : []
+                }
+            data = update_permission(
+                target=PERMISSIONS_TABLE.get('groups'),
+                target_id=update_data.get('id'),
+                data=api_objects.get('body'),
+                remove = True
+            )
+            return data
+    except Exception as e:
+        ...
+    raise HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail='server connection error'
+    )
+

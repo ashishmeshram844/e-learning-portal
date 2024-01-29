@@ -5,5 +5,6 @@ are required in group management and permissions
 
 GROUPS_TABLE = {
     'groups' : 'groups',
-    'apis' : 'apis'
+    'apis' : 'apis',
+    'roles' : 'roles'
 }
