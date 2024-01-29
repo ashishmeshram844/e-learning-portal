@@ -3,8 +3,6 @@ from dbs.mongo.queries.user_query import DBQuery
 from fastapi.exceptions import HTTPException
 from .tables import PERMISSIONS_TABLE
 
-
-
 def add_permission(
     target : str = None,
     target_id : str = None,
@@ -51,6 +49,14 @@ def update_permission(
     data : dict = {},
     remove = None
     ):
+    """
+    This function update extra permissions in target collection
+    - Parameters : 
+        - target : str (collection name where we want to update)
+        - target_id : str (id of targeted collection document)
+        - data : object (data which we want to update)
+        - remove : boolean (add in documet or remove from document define)
+    """
     try:
         if not target:
             raise HTTPException(
@@ -108,6 +114,9 @@ def get_api_permissions_objects(
     response = Response,
     update_data = None
     ):
+    """
+    This get a list of api permissions  which user provide ids
+    """
     try:
         update_data = update_data.dict(exclude_unset=True)
         api_permissions_ids = update_data.get('api_permissions')
@@ -131,6 +140,9 @@ def add_permission_in_target(
     update_data = None,
     target = None    
     ):
+    """
+    add permission in targeted collection 
+    """
     try:
         if update_data and target:
             api_objects = get_api_permissions_objects(
@@ -164,7 +176,10 @@ def update_permission_in_target(
         response = Response,
         update_data = None,
         target = None
-):
+    ):
+    """
+    Update the permissions in targeted collection
+    """
     try:
         if update_data and target:
             api_objects = get_api_permissions_objects(
@@ -190,13 +205,14 @@ def update_permission_in_target(
         detail='server connection error'
     )
 
-
-
 def remove_permission_in_target(
     response = Response,
     update_data = None,
     target = None    
     ):
+    """
+    Removes the permission from targeted collecetion 
+    """
     try:
         if update_data and target:
             api_objects = get_api_permissions_objects(

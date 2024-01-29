@@ -19,6 +19,9 @@ def create_role(
     response : Response,
     create_data : RolesInput
     ):
+    """
+    Create a new role 
+    """
     try:
         data = DBQuery().create(
             collection=ROLE_TABLES.get('roles',None),
@@ -41,6 +44,9 @@ def roles_list(
     request : Request,
     response : Response
     ):
+    """
+    Ferch all roles list which are available in collection or db
+    """
     try:
         data = DBQuery().find(
             collection=ROLE_TABLES.get('roles',None),
@@ -61,6 +67,9 @@ def role_detail(
     response : Response,
     id : str 
     ):
+    """
+    Fetnch detail of specific role
+    """
     try:
         data = DBQuery().find(
             collection=ROLE_TABLES.get('roles',None),
@@ -88,7 +97,10 @@ def delete_role(
     request:Request,
     response:Response,
     id : str
-):
+    ):
+    """
+    This deletes a specific role which client provide
+    """
     try:
         data = DBQuery().delete(
                 collection=ROLE_TABLES.get('roles',None),
@@ -117,8 +129,10 @@ def update_role(
     response : Response,
     id : str,
     update_data : UpdateRoleModel
-    )  :
-  
+    ):
+    """
+    Updates the role detail 
+    """
     try:
         # for partial update
         update_data = update_data.dict(exclude_unset=True)

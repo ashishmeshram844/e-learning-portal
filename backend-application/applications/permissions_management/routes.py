@@ -95,13 +95,6 @@ def remove_permissions_in_groups(
             detail='server connection error'
         )
 
-
-
-
-
-
-
-
 @permissions_management.post(
         path='/role/add',
         summary="Add Permissions in a Role"
@@ -115,7 +108,7 @@ def add_permission_in_roles(
     This api remove all previous permissions and add new permissions 
     onlly  which provided in body.
     - Body : 
-        - update_data : this contain group id and all permissions list
+        - update_data : this contain role id and all permissions list
     """
     try:
         data = add_permission_in_target(
