@@ -13,11 +13,13 @@ from .modals import ApiMethodsInput, ApiListResponse
 from dbs.mongo.get_db import get_db
 from dbs.db_names import ALL_DATABASES
 import uuid
-from dbs.mongo.queries.commons import convert_json, generate_response
 from dbs.mongo.queries.user_query import DBQuery
 from config.logger.all_loggers import create_user_log_message
 import inspect
+import socket
 
+hostname = socket.gethostname()
+IP = socket.gethostbyname(hostname)
 
 API_PROJECT_IP = "127.0.0.1:5000"
 
