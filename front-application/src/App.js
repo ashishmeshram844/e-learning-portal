@@ -1,24 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
-
+import { Fragment } from "react";
+import styles from "./static/css/index-page/index.module.css"
+import Navbar  from "./Components/Base/Navbar";
+import Slider from "./Components/Slider/Slider"
+import Achievements from "./Components/Achievements/Achievements"
+import CoursesWorkflow from "./Components/CoursesWorkflow/CoursesWorkflow"
+import Instructors from "./Components/Instructors/Instructors"
+import Services from "./Components/Services/Services"
+import LiveTutoring from "./Components/LiveTutoring/LiveTutoring"
+import Footer  from "./Components/Base/Footer";
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Fragment>
+      <div className={styles.App_Main}>
+        <Navbar />
+        <Slider />
+        <Achievements />
+        <CoursesWorkflow />
+        <Instructors />
+        <Services />
+        <LiveTutoring />
+        <Footer />
+      </div>
+    </Fragment>
   );
 }
 
