@@ -93,19 +93,24 @@ class UserResponse(UserBase):
         """
         Converts created datetime object to proper datetime format
         """
-        return convert_miliseconds_to_time(
-            date_obj=created
-        )
-    
+        try:
+            return convert_miliseconds_to_time(
+                date_obj=created
+            )
+        except:
+            return created
+        
     @validator('updated')
     def deserialize_updated_date(cls,updated):
         """
         Convert updated datetime object to proper datetime format
         """
-        return convert_miliseconds_to_time(
-            date_obj=updated
-        )
-    
+        try:
+            return convert_miliseconds_to_time(
+                date_obj=updated
+            )
+        except:
+            return updated
    
 class UsersListResponse(BaseModel):
     """

@@ -1,4 +1,7 @@
-from fastapi import Request, APIRouter,Response,status, Depends
+from fastapi import (
+    Request, APIRouter,Response,
+    status, Depends
+)
 from dbs.mongo.queries.user_query import DBQuery
 from fastapi.exceptions import HTTPException
 from config.logger.all_loggers import create_user_log_message
@@ -9,7 +12,10 @@ from .modals import (
     UpdateUserModel
 )
 from .tables import USER_TABLES
-from applications.permissions_management.dependencies import check_permission_in_group
+from applications.permissions_management.dependencies import (
+    check_permission_in_group
+)
+
 
 
 user_management = APIRouter(
