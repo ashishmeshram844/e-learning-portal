@@ -35,3 +35,9 @@ class RolesListModel(BaseModel):
     """
     status : int
     body : list[RolesInput]
+
+
+
+class AssignRoleToUserRequestModal(BaseModel):
+    role_id : str
+    user_id : str

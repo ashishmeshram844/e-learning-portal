@@ -42,7 +42,6 @@ def create_group(
             collection=GROUPS_TABLE.get('groups',None),
             data=create_data.dict()
         )
-        print(data)
         response.status_code = status.HTTP_201_CREATED
         return create_data.dict()
     except Exception as e:

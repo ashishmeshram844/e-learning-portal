@@ -1,5 +1,5 @@
 from fastapi import APIRouter,Request,Response,status
-from .modals import RolesInput, RolesListModel,UpdateRoleModel
+from .modals import RolesInput, RolesListModel,UpdateRoleModel,AssignRoleToUserRequestModal
 from dbs.mongo.queries.user_query import DBQuery
 from .tables import ROLE_TABLES
 from fastapi.exceptions import HTTPException
@@ -157,3 +157,26 @@ def update_role(
         status_code=500,
         detail='server connection error'
     )
+
+
+from applications.user_management.routes import update_user,get_user_detail
+from applications.user_management.modals import UpdateUserModel
+
+@roles_management.post(
+    path='/assign/user',
+    summary="Assign role to User"
+)
+def assign_user_role(
+    request : Request,
+    response : Response,
+    data : AssignRoleToUserRequestModal
+    ):
+    result = update_user(
+        request=request,
+        response=response,
+        id=data.user_id,
+        update_data=UpdateUserModel(role = data.user_id)
+    )
+    print("UPDATES : ",result)
+    return result
+

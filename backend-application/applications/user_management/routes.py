@@ -9,6 +9,8 @@ from .modals import (
     UpdateUserModel
 )
 from .tables import USER_TABLES
+from applications.permissions_management.dependencies import check_permission_in_group
+
 
 user_management = APIRouter(
     prefix= '/users',
@@ -18,12 +20,13 @@ user_management = APIRouter(
 @user_management.get(
         path='/', 
         response_model = UsersListResponse,
-        summary="Get Users List"
+        summary="Get Users List",
     )
 async def get_users(
     request:Request,
     response : Response,
-    active : bool | None = None
+    active : bool | None = None,
+    # is_permission = Depends(check_permission_in_group)
     ) -> UsersListResponse:
     """
     ### This function get all available users list.
