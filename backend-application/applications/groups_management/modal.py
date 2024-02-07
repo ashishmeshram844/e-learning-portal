@@ -5,12 +5,16 @@ Contain all modal which are used in groups  management application
 from pydantic import BaseModel
 from datetime import datetime
 import uuid
+from pydantic import validator
+from .tables import GROUPS_TABLE
+from applications.user_management.validators import check_val_avail
 
 class GroupsBaseModel(BaseModel):
     """
     This is base modal for groups
     """
     name : str
+
 
 class CreateGroupsModel(GroupsBaseModel):
     """
@@ -21,6 +25,13 @@ class CreateGroupsModel(GroupsBaseModel):
     created : datetime = datetime.now()
     updated : datetime = datetime.now()
     created_by : str
+
+    @validator('name')
+    def check_group_is_avail(cls,name):
+         return check_val_avail(
+            collection=GROUPS_TABLE.get('groups'),
+            query=('name',name),
+        )
 
 class GroupsListModel(BaseModel):
     """

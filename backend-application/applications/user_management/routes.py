@@ -16,8 +16,6 @@ from applications.permissions_management.dependencies import (
     check_permission_in_group
 )
 
-
-
 user_management = APIRouter(
     prefix= '/users',
     tags= ["User Management"]

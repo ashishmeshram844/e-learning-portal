@@ -5,5 +5,6 @@ for permissions
 
 PERMISSIONS_TABLE = {
     'groups' : 'groups',
-    'apis' : 'apis'
+    'apis' : 'apis',
+    'users': 'users'
 }

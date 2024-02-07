@@ -176,4 +176,33 @@ def remove_permissions_in_role(
         )
 
 
+@permissions_management.post(
+        path='/user/add',
+        summary="Add Permissions in a User"
+    )
+def add_permission_in_user(
+    request : Request,
+    response : Response,
+    update_data : AddPermissionsModal
+    ):
+    """
+    This api remove all previous permissions and add new permissions
+    onlly  which provided in body.
+    - Body :
+        - update_data : this contain role id and all permissions list
+    """
+    try:
+        data = add_permission_in_target(
+            response=response,
+            update_data=update_data,
+            target=PERMISSIONS_TABLE.get('users')
+        )
+        return data
+    except Exception as e:
+        ...
+    raise HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail='server connection error'
+    )
+
 

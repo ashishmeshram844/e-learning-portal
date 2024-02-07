@@ -149,13 +149,13 @@ def add_permission_in_target(
                 response=response,
                 update_data=update_data
             )
-           
             if not api_objects.get('body'):
                 return {
                     'status' : status.HTTP_404_NOT_FOUND,
                     'message' : "permissions not found",
                     'body' : []
                 }
+            update_data = update_data.dict()
             data = add_permission(
                 target=target,
                 target_id=update_data.get('id'),
@@ -165,7 +165,7 @@ def add_permission_in_target(
                 response.status_code = status.HTTP_404_NOT_FOUND
             return data
     except Exception as e:
-        pass  
+        ...
     raise HTTPException(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         detail='server connection error'
@@ -225,6 +225,7 @@ def remove_permission_in_target(
                     'status' : status.HTTP_404_NOT_FOUND,
                     'body' : []
                 }
+            update_data = update_data.dict()
             data = update_permission(
                 target=PERMISSIONS_TABLE.get('groups'),
                 target_id=update_data.get('id'),

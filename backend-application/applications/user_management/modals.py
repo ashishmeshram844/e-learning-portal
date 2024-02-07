@@ -81,6 +81,7 @@ class UserResponse(UserBase):
     inherit the fields from UserBase class Modal
     """
     active: bool
+    permissions : list = []
     created :  Optional[datetime | dict]  = Field(
         default=None
         )
