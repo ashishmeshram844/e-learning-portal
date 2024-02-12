@@ -6,9 +6,16 @@ from pydantic import BaseModel
 import uuid
 from enum import Enum
 from pydantic import validator
+#from applications.user_management.validators import validate_string_length
+from .common import *
+
 
 
 class AvailableApiMethods(Enum):
+    """
+    List of methods which are allowed
+    following methods can only request user 
+    """
     GET = "GET"
     POST = "POST"
     PUT = "PUT"
@@ -17,7 +24,7 @@ class AvailableApiMethods(Enum):
 
 class ApiMethodsInput(BaseModel):
     """
-    Basemodal for Api methods data
+    Input request modal for client
     """
     methods : list[str]  
 
@@ -28,13 +35,17 @@ class ApiMethodsInput(BaseModel):
         our requirements
         """
         for parsed_method in methods:
+            validate_string_length(
+                string = parsed_method,
+                max_len = 6
+            )
             if not parsed_method.upper() in AvailableApiMethods.__members__:
                 raise  ValueError(f"{parsed_method} method is invalid")
         return methods
 
 class ApiAvailDataModal(BaseModel):
     """
-    Modal fgr Response available api data
+    Modal for Response available api data
     """
     id : str
     path : str

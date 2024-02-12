@@ -11,8 +11,7 @@ from pydantic import Field
 from uuid import uuid4
 from pydantic import EmailStr
 from .tables import USER_TABLES
-from .validators import check_val_avail,convert_miliseconds_to_time
-
+from applications.custom_validators import *
 
 class UserBase(BaseModel):
     """
@@ -43,11 +42,22 @@ class UserInput(UserBase):
         default=datetime.now()
         )
     
+    @validator('id')
+    def override_id_value(cls,id):
+        """
+        Override uuid of the client request data
+        """
+        return override_uuid()
+    
     @validator('username')
     def check_username_avail(cls,username):
         """
         checks username is already registered or not
         """
+        validate_string_length(
+            string = username,
+            max_len = 50
+        )
         return check_val_avail(
             collection=USER_TABLES.get('users'),
             query=('username',username),
@@ -58,6 +68,10 @@ class UserInput(UserBase):
         """
         Check email is already registered or not
         """
+        validate_string_length(
+            string = email,
+            max_len = 60
+        )
         return check_val_avail(
             collection=USER_TABLES.get('users'),
             query=('email',email),
@@ -72,6 +86,17 @@ class UserInput(UserBase):
         return check_val_avail(
             collection=USER_TABLES.get('users'),
             query=('mobile',mobile),
+        )
+    
+    @validator('password')
+    def validate_password_length(cls,password):
+        """
+        Check mobile number is already available in user
+        database or not
+        """
+        return validate_string_length(
+            string = password,
+            max_len = 80
         )
 
 
@@ -139,6 +164,10 @@ class UpdateUserModel(BaseModel):
         """
         Check email is already registered or not
         """
+        validate_string_length(
+            string = email,
+            max_len = 60
+        )
         return check_val_avail(
             collection=USER_TABLES.get('users'),
             query=('email',email),

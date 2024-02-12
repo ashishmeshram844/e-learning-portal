@@ -8,10 +8,9 @@ from pydantic import Field
 from uuid import uuid4
 from pydantic import EmailStr
 from bson import ObjectId
-from .tables import USER_TABLES
 from dbs.mongo.queries.user_query import DBQuery
-
-
+from applications.user_management.tables import USER_TABLES
+import uuid
 
 
 def check_val_avail(
@@ -67,3 +66,20 @@ def validate_string_length(
         pass
     return string
 
+
+def override_uuid():
+    return str(uuid.uuid4())
+
+
+def check_id_in_collection(
+    collection = None,
+    query : tuple = None,        
+    ):
+    data = DBQuery().find(
+        collection=collection,
+        query={query[0] : query[1]},
+        only_one=True
+    )
+    if data.get('body'):
+        return query[1]
+    raise ValueError(f"{query[1]} is invalida")
