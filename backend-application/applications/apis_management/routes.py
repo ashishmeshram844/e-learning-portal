@@ -17,6 +17,7 @@ from dbs.mongo.queries.user_query import DBQuery
 from config.logger.all_loggers import create_user_log_message
 import inspect
 import socket
+from applications.custom_api_responses import ERR_RESPONSES
 
 hostname = socket.gethostname()
 IP = socket.gethostbyname(hostname)
@@ -49,10 +50,7 @@ def get_apis_list(
         body_methods = body_data.methods
         if not body_methods:
             response.status_code = status.HTTP_404_NOT_FOUND
-            return {
-                'status' : status.HTTP_404_NOT_FOUND,
-                'body' : []
-            }
+            return ERR_RESPONSES[404]
         apis_list = list()
         all_db_apis =  DBQuery().find(
             collection='apis'
@@ -102,7 +100,7 @@ def reset_all_apis_in_db(
         for route in request.app.routes:
             api_summary = None
             try:api_summary = route.summary
-            except:pass
+            except:...
             apis_list.append( 
                 {   'id' : str(uuid.uuid4()),
                     'path': f'http://{API_PROJECT_IP}{route.path}', 
@@ -128,3 +126,4 @@ def reset_all_apis_in_db(
             detail='server connection error'
         )
     
+

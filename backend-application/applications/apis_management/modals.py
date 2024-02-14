@@ -24,7 +24,7 @@ class AvailableApiMethods(Enum):
 
 class ApiMethodsInput(BaseModel):
     """
-    Input request modal for client
+    Input request modal for client for fetchig apis list
     """
     methods : list[str]  
 
