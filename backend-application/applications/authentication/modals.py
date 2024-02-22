@@ -34,7 +34,7 @@ class TokenInput(BaseModel):
             max_len = 80
         )
 
-class TokenResponse(BaseModel):
+class TokenResponse(BaseModel): 
     """
     Sample modal for token response
     """

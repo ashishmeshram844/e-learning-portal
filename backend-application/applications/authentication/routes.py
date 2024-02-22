@@ -75,6 +75,7 @@ async def create_token(
             )
         }
     except Exception as e:
+        print("ERROR : ",e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='server connection error'

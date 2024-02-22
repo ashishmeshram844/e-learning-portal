@@ -3,10 +3,8 @@ Contain all modals which are required for apis managements
 """
 
 from pydantic import BaseModel
-import uuid
 from enum import Enum
 from pydantic import validator
-#from applications.user_management.validators import validate_string_length
 from .common import *
 
 

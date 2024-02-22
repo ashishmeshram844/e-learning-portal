@@ -5,19 +5,13 @@ Contain all api routes for api managements
 - get all apis list
 - reset all apis list
 """
-
-from fastapi import APIRouter,Request,Response,status
-from .tables import APIS_TABLES
-from fastapi.exceptions import HTTPException
-from .modals import ApiMethodsInput, ApiListResponse
-from dbs.mongo.get_db import get_db
-from dbs.db_names import ALL_DATABASES
-import uuid
-from dbs.mongo.queries.user_query import DBQuery
-from config.logger.all_loggers import create_user_log_message
-import inspect
-import socket
-from applications.custom_api_responses import ERR_RESPONSES
+from . import (
+    ApiMethodsInput, ApiListResponse,
+    APIRouter,Request,Response,status,HTTPException,
+    ApiMethodsInput, ApiListResponse,
+    create_user_log_message,inspect,socket,
+    ERR_RESPONSES,get_filtered_apis,override_apis
+)
 
 hostname = socket.gethostname()
 IP = socket.gethostbyname(hostname)
@@ -41,8 +35,8 @@ def get_apis_list(
     ):
     """
     ### This api gives all available apis list
-    - Client can access this endpoints response if they have permissions\n
-    then only they can access else unauthorized reponse 
+    - Client can access this endpoints response if they have\n
+    permissions then only they can access else unauthorized reponse 
     #### Body :
     - methods : (array) 
     """
@@ -51,21 +45,7 @@ def get_apis_list(
         if not body_methods:
             response.status_code = status.HTTP_404_NOT_FOUND
             return ERR_RESPONSES[404]
-        apis_list = list()
-        all_db_apis =  DBQuery().find(
-            collection='apis'
-        )
-        apis_list = [
-            {
-                'id': route['id'],
-                'path': route['path'],
-                'name': route['name'],
-                'summary': route['summary'],
-                'method': route['method']
-            }
-            for route in all_db_apis.get('body', [])
-            if any(req_mtd.upper() in route['method'] for req_mtd in body_methods)
-        ]
+        apis_list = get_filtered_apis(mthd=body_methods)
         return {
             'status' : status.HTTP_200_OK,
             'body' : apis_list
@@ -93,37 +73,22 @@ def reset_all_apis_in_db(
     """
     This api reset all api objects in apis collections
     - this delete all previous objects and add new objects again 
-    - note :  ids of this objects will be chnaged everytime whenever we reset
+    - note :  ids of this objects will be chnaged everytime \n
+    whenever we reset
     """
     try:
-        apis_list = list()
-        for route in request.app.routes:
-            api_summary = None
-            try:api_summary = route.summary
-            except:...
-            apis_list.append( 
-                {   'id' : str(uuid.uuid4()),
-                    'path': f'http://{API_PROJECT_IP}{route.path}', 
-                    'name': route.name,
-                    'summary' : api_summary,
-                    'method' : list(route.methods)
-                }
-            )
-        get_db(
-            db_name=ALL_DATABASES.get('users_db',None)
-            )[APIS_TABLES.get('apis')].drop()
-        get_db(
-            db_name=ALL_DATABASES.get('users_db',None)
-            )[APIS_TABLES.get('apis')].insert_many(
-                apis_list
-            )
-        response.status_code = status.HTTP_205_RESET_CONTENT
+        result = override_apis(all_routes = request.app.routes)
+        if result:
+            response.status_code = status.HTTP_205_RESET_CONTENT
         return {}
     except Exception as e:
-        print(e)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='server connection error'
+        create_user_log_message(
+            message=f'failed to reset api list because : {e}',
+            state="error",
+            module=f"{__name__}.{inspect.stack()[0][3]}"
         )
-    
+    raise HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail='server connection error'
+    )
 
