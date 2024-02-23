@@ -1,0 +1,32 @@
+[
+    {
+      "name": "Dashboard",
+      "icon": "icon-dashboard",
+      "link": "/"
+    },
+    {
+      "name": "Teams",
+      "icon": "icon-info",
+      "link": "/about"
+    },
+    {
+      "name": "Team",
+      "icon": "icon-groups",
+      "link": "/team"
+    },
+    {
+      "name": "Organizer",
+      "icon": "icon-volunteer_activism",
+      "link": "/organizer"
+    },
+    {
+      "name": "Event",
+      "icon": "icon-event",
+      "link": "/event"
+    },
+    {
+      "name": "Contact",
+      "icon": "icon-contact_support",
+      "link": "/contact"
+    }
+  ]

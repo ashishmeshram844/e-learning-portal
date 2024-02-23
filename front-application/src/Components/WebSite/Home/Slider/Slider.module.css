@@ -1,0 +1,30 @@
+.SliderMain{
+    @apply w-full overflow-x-hidden relative
+}
+.SliderWrap{
+    @apply relative transition-all flex
+}
+.SliderItem {
+    @apply w-screen bg-center bg-cover h-96
+}
+.SliderPlay{
+    @apply flex gap-x-3 items-center justify-center text-xl absolute left-0 right-0 bottom-3 text-white
+}
+.SliderAutoPlay{
+    @apply flex
+}
+.SliderDot{
+    @apply flex gap-x-1
+}
+.SliderActiveDot{
+    @apply bg-red-500 w-2 h-2 rounded-full 
+}
+.SliderNotActiveDot{
+    @apply bg-white w-2 h-2 rounded-full
+}
+.SliderArrowPrev{
+    @apply flex justify-between
+}
+.SliderArrowNext{
+    @apply flex justify-between
+}

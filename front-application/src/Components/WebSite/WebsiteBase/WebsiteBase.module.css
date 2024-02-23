@@ -1,0 +1,25 @@
+.NavMain{
+    @apply w-full fixed z-50
+}
+.NavLogo {
+    @apply w-36
+}
+.NavMenu {
+    @apply flex gap-x-4 justify-end
+}
+
+.NavMenu a {
+    @apply flex font-semibold tracking-widest uppercase text-white gap-x-1 border-r-2 pr-4 last:pr-0 border-white last:border-r-0 hover:text-red-500 transition-all
+}
+
+.SignBtn{
+    @apply border-l-2 border-white pl-6
+}
+.SignBtn a{
+    @apply flex h-7 w-10 justify-center text-red-500 tracking-wide rounded-full gap-x-1 items-center border-2 border-red-500 transition-all
+    hover:border-white hover:text-white
+}
+
+.FooterMain{
+    @apply bg-[#eaf1fb] flex gap-x-1 items-center h-8 justify-center text-gray-800 font-semibold text-xs tracking-widest fixed bottom-0 w-full
+}
