@@ -83,3 +83,4 @@ def check_id_in_collection(
     if data.get('body'):
         return query[1]
     raise ValueError(f"{query[1]} is invalida")
+

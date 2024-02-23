@@ -81,8 +81,6 @@ async def create_token(
             detail='server connection error'
             )
 
-
-
 @authentication.get(
         path='/me',
         summary="Get Token Detail"
