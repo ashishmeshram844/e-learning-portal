@@ -1,0 +1,23 @@
+/* Tooltip */
+.TTUp{
+    @apply flex
+}
+
+/* Breadcrumbs */
+.BreadCrumbsMain{
+    @apply flex justify-between items-center
+}
+.BCTitle{
+    @apply text-lg tracking-wider font-theame font-normal uppercase text-gray-400
+}
+.BreadCrumbMenu{
+    @apply flex gap-x-2 text-iconColor items-center text-base tracking-wider font-theame font-normal
+}
+.BCHome{
+    @apply w-10 h-10 text-blue-500 text-lg rounded-full hover:bg-hover flex items-center justify-center
+}
+
+/* Card Component */
+.CardCompoBig{
+    @apply bg-white rounded-xl shadow
+}

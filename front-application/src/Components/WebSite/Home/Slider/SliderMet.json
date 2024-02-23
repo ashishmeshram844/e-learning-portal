@@ -1,0 +1,44 @@
+[
+    {
+      "slideImage": "url(https://unsplash.it/1900/1024/?image=497)",
+      "slideTitle": "Lorem ipsum dolor",
+      "slideParagraph": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita, iure?",
+      "slideBtn1":"Register Now",
+      "slideBtn2": "Contact Us"
+    },
+    {
+      "slideImage": "url(https://unsplash.it/1900/1024/?image=291)",
+      "slideTitle": "Lorem ipsum dolor",
+      "slideParagraph": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita, iure?",
+      "slideBtn1":"Register Now",
+      "slideBtn2": "Contact Us"
+    },
+    {
+      "slideImage": "url(https://unsplash.it/1900/1024/?image=786)",
+      "slideTitle": "Lorem ipsum dolor",
+      "slideParagraph": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita, iure?",
+      "slideBtn1":"Register Now",
+      "slideBtn2": "Contact Us"
+    },
+    {
+      "slideImage": "url(https://unsplash.it/1900/1024/?image=768)",
+      "slideTitle": "Lorem ipsum dolor",
+      "slideParagraph": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita, iure?",
+      "slideBtn1":"Register Now",
+      "slideBtn2": "Contact Us"
+    },
+    {
+      "slideImage": "url(https://unsplash.it/1900/1024/?image=726)",
+      "slideTitle": "Lorem ipsum dolor",
+      "slideParagraph": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita, iure?",
+      "slideBtn1":"Register Now",
+      "slideBtn2": "Contact Us"
+    },
+    {
+      "slideImage": "url(https://unsplash.it/1900/1024/?image=821)",
+      "slideTitle": "Lorem ipsum dolor",
+      "slideParagraph": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita, iure?",
+      "slideBtn1":"Register Now",
+      "slideBtn2": "Contact Us"
+    }
+  ]
