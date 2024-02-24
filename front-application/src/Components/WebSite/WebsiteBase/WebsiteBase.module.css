@@ -5,18 +5,15 @@
     @apply w-36
 }
 .NavMenu {
-    @apply flex gap-x-4 justify-end
+    @apply flex gap-x-4 justify-end flex-1
 }
 
 .NavMenu a {
-    @apply flex font-semibold tracking-widest uppercase text-white gap-x-1 border-r-2 pr-4 last:pr-0 border-white last:border-r-0 hover:text-red-500 transition-all
+    @apply flex items-center font-semibold text-base tracking-widest uppercase text-white gap-x-1 border-r-2 pr-4 last:pr-0 border-white last:border-r-0 hover:text-red-500 transition-all
 }
 
 .SignBtn{
-    @apply border-l-2 border-white pl-6
-}
-.SignBtn a{
-    @apply flex h-7 w-10 justify-center text-red-500 tracking-wide rounded-full gap-x-1 items-center border-2 border-red-500 transition-all
+    @apply flex  h-9 px-4 text-sm tracking-wider justify-center text-white font-medium uppercase gap-x-1 items-center rounded-full shadow-inner shadow-black bg-red-700 transition-all
     hover:border-white hover:text-white
 }
 

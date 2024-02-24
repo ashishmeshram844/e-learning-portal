@@ -2,8 +2,7 @@ import React, { Fragment } from 'react'
 import styles from './Auth.module.css'
 import { Link } from 'react-router-dom'
 import ideatronLogo from '../../assets/Image/ideatron.svg'
-import tyroneLogo from '../../assets/Image/tyrone.svg'
-import netwebLogo from '../../assets/Image/netweb.svg'
+
 const Login = () => {
   return (
     <Fragment>
@@ -56,12 +55,12 @@ const Login = () => {
         <div className="col-span-2">
           <div className={`${styles.FooterAuth}`}>
             <span>Powered By </span>
-            <Link target='_blank' to={'https://tyronesystems.com'}>
-                <img src={tyroneLogo}  className='w-12' />
+            <Link target='_blank' to={'/'}>
+                Test
             </Link>
             <span>&</span>
-            <Link target='_blank' to={'https://netwebindia.com'}>
-                <img src={netwebLogo}  className='w-14' />
+            <Link target='_blank' to={'/'}>
+               Test
             </Link>
           </div>
         </div>

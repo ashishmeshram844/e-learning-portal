@@ -9,9 +9,9 @@ const MainRouter = () => {
     <Fragment>
       <Routes>
         <Route path="*" element={<BasePage />} />
-        {/* <Route path={"/login"} element={<Login />} /> */}
-        {/* <Route path={"/register"} element={<Register />} /> */}
-        {/* <Route path={"/forgot-password"} element={<ForgotPassword />} /> */}
+        <Route path={"/login"} element={<Login />} />
+        <Route path={"/register"} element={<Register />} />
+        <Route path={"/forgot-password"} element={<ForgotPassword />} />
       </Routes>
     </Fragment>
   );
