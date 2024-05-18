@@ -2,6 +2,8 @@ from config.settings.settings import app
 
 
 
+
+
 from fastapi import FastAPI, WebSocket
 from fastapi.responses import HTMLResponse
 from dbs.mongo.queries.user_query import DBQuery
@@ -20,5 +22,6 @@ import json
 #         data = json.dumps(data)
 #         print(data)
 #         await websocket.send_text(data)
+
 
 

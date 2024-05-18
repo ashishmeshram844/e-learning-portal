@@ -208,8 +208,8 @@ def update_user(
         summary="Delete User"
     )
 def delete_user(
-    request:Request,
-    response:Response,
+    request:Request, 
+    response:Response, 
     id : str
 ):
     """
